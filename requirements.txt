@@ -1,0 +1,13 @@
+numpy
+pandas
+python-docx
+torch>=1.4
+configparser
+xlrd
+openpyxl
+tensorboardX
+sklearn
+PyYAML
+h5py
+torch_optimizer
+matplotlib
