@@ -41,7 +41,10 @@ sample_submission.csv - A submission file in the correct format.
 
 ## ToDo
 - 
-
+## On Going
+- 
+## Done
+- 
 
 ## introduction
 ホームディレクトリに.kaggleディレクトリが作成されている前提で作成します。
