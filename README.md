@@ -24,8 +24,15 @@ sample_submission.csv - A submission file in the correct format.
 再実行データセットは、パブリックテストで見られる例の約4倍の数を持つ
 ### ファイル
 - train_features.csv - train_features.csv - 訓練セットの特徴量．g-は遺伝子発現データ，c-は細胞生存率データを示す． cp_typeは化合物（cp_vehicle）または対照摂動（ctrl_vehicle）で処理されたサンプルを示す；対照摂動はMoAsを持たない；cp_timeとcp_doseは処理時間（24, 48, 72時間）と投与量（高または低）を示す．
+    * g-接頭辞を持つ特徴量は遺伝子発現特徴量であり、その数は772個（g-0からg-771まで）ある
+    * c-接頭辞を持つ特徴量は細胞生存率の特徴量であり、その数は100個（c-0からc-99まで）ある
+    * cp_typeは，サンプルが化合物で処理されたか，対照摂動（rt_cpまたはctl_vehicle）で処理されたかを示す2値のカテゴリ特徴量
+    * cp_timeは，治療期間（24時間，48時間，72時間）を示す分類的特徴量
+    * cp_doseは，投与量が低いか高いかを示す2値のカテゴリ特徴量である(D1またはD2)．
 - train_targets_scored.csv - スコアされるバイナリMoAターゲット
+    * Number of Scored Target Features: 206
 - train_targets_nonscored.csv - 訓練データの追加の（オプションの）バイナリMoA反応。これらは予測もスコア化もされない
+    * Number of Non-scored Target Features: 402
 - test_features.csv - テストデータの特徴量．テストデータの各行のスコアされたMoAの確率を予測する必要がある
 - sample_submission.csv - 正しい形式の提出ファイル
 
