@@ -65,3 +65,11 @@ kaggle datasets download -d yasufuminakama/iterative-stratification
 unzip iterative-stratification.zip
 rm lish-moa.zip iterative-stratification.zip
 ```
+
+- 10/14(水)
+    - 今日やったこと
+        * チームアップのミーティング！
+        * リポジトリ作成&コンペの理解
+    - 次回やること
+        * TabularNetの実行&推論結果を作成
+        * ToDo埋める

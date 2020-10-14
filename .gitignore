@@ -1,2 +1,29 @@
+# general
+*~
+*.pyc
+\#*\#
+.\#*
+*DS_Store
+out.txt
+/build
+/dist
+doc/_build
+slurm-*.out
+tmp*
+.eggs/
+.hypothesis/
+.idea
+.backup/
+.pytest_cache/
+__pycache__/
+.coverage*
+coverage.xml*
+.vscode*
+.nfs*
+.python-version
+.worktree
+*.log
+# dataset
 input/
+# venv
 venv/
