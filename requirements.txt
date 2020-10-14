@@ -12,3 +12,5 @@ h5py
 torch_optimizer
 matplotlib
 kaggle
+black
+flake8

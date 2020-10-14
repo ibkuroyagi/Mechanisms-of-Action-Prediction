@@ -23,7 +23,7 @@ sample_submission.csv - A submission file in the correct format.
 トレーニングデータには、テストデータには含まれず、スコアリングには使用されないMoAラベルの追加（オプション）セットがある
 再実行データセットは、パブリックテストで見られる例の約4倍の数を持つ
 ### ファイル
-- train_features.csv - 訓練セットの特徴量．cp_type は化合物（cp_vehicle）または対照摂動（ctrl_vehicle）で処理されたサンプルを示し、対照摂動は MoA を持たない
+- train_features.csv - train_features.csv - 訓練セットの特徴量．g-は遺伝子発現データ，c-は細胞生存率データを示す． cp_typeは化合物（cp_vehicle）または対照摂動（ctrl_vehicle）で処理されたサンプルを示す；対照摂動はMoAsを持たない；cp_timeとcp_doseは処理時間（24, 48, 72時間）と投与量（高または低）を示す．
 - train_targets_scored.csv - スコアされるバイナリMoAターゲット
 - train_targets_nonscored.csv - 訓練データの追加の（オプションの）バイナリMoA反応。これらは予測もスコア化もされない
 - test_features.csv - テストデータの特徴量．テストデータの各行のスコアされたMoAの確率を予測する必要がある
@@ -37,7 +37,7 @@ sample_submission.csv - A submission file in the correct format.
 
 
 ## introduction
-ホームディレクトリに.kaggleファイルが作成されている前提で作成します。
+ホームディレクトリに.kaggleディレクトリが作成されている前提で作成します。
 ない場合は、こちら[https://www.currypurin.com/entry/2018/kaggle-api](https://www.currypurin.com/entry/2018/kaggle-api)を参照してください。
 ```
 # リポジトリのクローン
@@ -50,6 +50,8 @@ pip install -r requirements.txt
 mkdir input
 cd input
 kaggle competitions download -c lish-moa
-unzip -j lish-moa
-rm lish-moa.zip
+unzip lish-moa
+kaggle datasets download -d yasufuminakama/iterative-stratification
+unzip iterative-stratification.zip
+rm lish-moa.zip iterative-stratification.zip
 ```
