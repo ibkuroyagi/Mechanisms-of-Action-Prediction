@@ -27,3 +27,5 @@ coverage.xml*
 input/
 # venv
 venv/
+# resuls
+working/exp*/
