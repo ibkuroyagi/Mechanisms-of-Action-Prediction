@@ -34,3 +34,20 @@ sample_submission.csv - A submission file in the correct format.
 
 ## ToDo
 - 
+
+
+## introduction
+ホームディレクトリに.kaggleファイルが作成されている前提で作成します。
+ない場合は、
+```
+git clone https://github.com/ibkuroyagi/Mechanisms-of-Action-Prediction.git
+m
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+mkdir input
+cd input
+kaggle competitions download -c lish-moa
+unzip -j lish-moa
+rm lish-moa.zip
+```
