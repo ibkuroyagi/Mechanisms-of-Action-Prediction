@@ -38,13 +38,15 @@ sample_submission.csv - A submission file in the correct format.
 
 ## introduction
 ホームディレクトリに.kaggleファイルが作成されている前提で作成します。
-ない場合は、
+ない場合は、こちら[https://www.currypurin.com/entry/2018/kaggle-api](https://www.currypurin.com/entry/2018/kaggle-api)を参照してください。
 ```
+# リポジトリのクローン
 git clone https://github.com/ibkuroyagi/Mechanisms-of-Action-Prediction.git
-m
+# 仮想環境の構築
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+# 入力データのダウンロード
 mkdir input
 cd input
 kaggle competitions download -c lish-moa
