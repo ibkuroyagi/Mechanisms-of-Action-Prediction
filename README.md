@@ -73,3 +73,8 @@ rm lish-moa.zip iterative-stratification.zip
     - 次回やること
         * TabularNetの実行&推論結果を作成
         * ToDo埋める
+- 10/15(木)
+    - 今日やったこと
+        * TabularNetの実行&推論結果を作成
+    - 次回やること
+        * kernelにモデルをアップロードしてsubmitを成功させる
