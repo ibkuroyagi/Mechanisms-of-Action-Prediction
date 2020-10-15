@@ -1,17 +1,13 @@
-import sys
-import math, random
-import gc, os
+# sys.path.append('../input/iterative-stratification/iterative-stratification-master')
+from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
+import random
+import os
 import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.kernel_approximation import Nystroem
-from sklearn.decomposition import PCA, KernelPCA, TruncatedSVD
-from sklearn.model_selection import KFold
+
 from sklearn.metrics import log_loss
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import FeatureAgglomeration, AgglomerativeClustering, KMeans
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from tqdm.notebook import tqdm
 
 import torch
@@ -19,18 +15,10 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
-
-sys.path.append("../input/iterative-stratification/iterative-stratification-master")
-from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
-
-# from hyperopt import hp, fmin, tpe, Trials
-# from hyperopt.pyll.base import scope
-from tqdm.notebook import tqdm
-
 import warnings
 
 warnings.filterwarnings("ignore")
-
+print("import modules")
 
 # %%
 train_features = pd.read_csv("../input/lish-moa/train_features.csv")
@@ -41,6 +29,7 @@ test_features = pd.read_csv("../input/lish-moa/test_features.csv")
 ss = pd.read_csv("../input/lish-moa/sample_submission.csv")
 
 
+# %%
 def preprocess(df):
     df = df.copy()
     df.loc[:, "cp_type"] = df.loc[:, "cp_type"].map({"trt_cp": 0, "ctl_vehicle": 1})
@@ -58,6 +47,7 @@ train_targets = train_targets.loc[train["cp_type"] == 0].reset_index(drop=True)
 train = train.loc[train["cp_type"] == 0].reset_index(drop=True)
 
 
+# %%
 def seed_everything(seed_value):
     random.seed(seed_value)
     np.random.seed(seed_value)
@@ -88,6 +78,11 @@ criterion = nn.BCELoss()
 # for GPU/CPU
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+# # ODST/NODE
+#
+# https://github.com/Qwicen/node
+
+# %%
 import contextlib
 from torch.autograd import Function
 from collections import OrderedDict
@@ -675,8 +670,14 @@ class DenseBlock(nn.Sequential):
         return outputs
 
 
+# # QHAdam
+#
+# https://github.com/facebookresearch/qhoptim
+
+# %%
 from torch.optim.optimizer import Optimizer, required
 import collections
+import math
 
 QHMParams = collections.namedtuple("QHMParams", ["alpha", "nu", "beta"])
 
@@ -1197,6 +1198,9 @@ def QHAdamW(params, *args, **kwargs):
     return QHAdam(params, *args, decouple_weight_decay=True, **kwargs)
 
 
+# # Features
+
+# %%
 top_feats = [
     1,
     2,
@@ -1988,6 +1992,7 @@ top_feats = [
 print(len(top_feats))
 
 
+# %%
 # dataset class
 class MoaDataset(Dataset):
     def __init__(self, df, targets, feats_idx, mode="train"):
@@ -2101,7 +2106,11 @@ for seed in range(nstarts):
             else:
                 es_count += 1
 
-            #             print("Epoch {}/{} - loss: {:5.5f} - val_loss: {:5.5f} - es: {}".format(epoch+1, nepochs, epoch_loss['train'], epoch_loss['val'], es_count))
+            print(
+                "Epoch {}/{} - loss: {:5.5f} - val_loss: {:5.5f} - es: {}".format(
+                    epoch + 1, nepochs, epoch_loss["train"], epoch_loss["val"], es_count
+                )
+            )
 
             if es_count > 20:
                 break
@@ -2131,6 +2140,8 @@ def mean_log_loss(y_true, y_pred):
         )
     return np.mean(metrics)
 
+
+# # Inference
 
 # %%
 for seed in range(nstarts):

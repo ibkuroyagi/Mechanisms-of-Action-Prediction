@@ -23,9 +23,11 @@ coverage.xml*
 .python-version
 .worktree
 *.log
-# dataset
+# input dataset
 input/
 # venv
 venv/
-# resuls
+# results
 working/exp*/
+working/*.pt
+working/*.csv

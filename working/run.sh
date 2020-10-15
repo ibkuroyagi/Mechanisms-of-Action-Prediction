@@ -38,6 +38,6 @@ if [ "${stage}" -le 2 ] && [ "${stop_stage}" -ge 2 ]; then
     log "Training start. See the progress via ${outdir}/train.log"
     # shellcheck disable=SC2086
     ${train_cmd} --gpu "${n_gpus}" "${outdir}/train.log" \
-        python tabularnet_baseline.py
+        python tab_base.py
     log "Successfully finished the training."
 fi
