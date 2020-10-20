@@ -28,28 +28,36 @@
 
 ## ToDo
 - [https://www.kaggle.com/c/lish-moa/discussion/184005](https://www.kaggle.com/c/lish-moa/discussion/184005)
+* 特徴量作成
 - [ ] ノンスコアのターゲットを予測し、その後のモデルのメタ特徴として使用
 - [ ] ノンスコアのターゲットも含めたモデルで学習する
-- [ ] バランシングの適応
 - [ ] カテゴリ変数を埋め込み特徴量として学習
 - [ ] AEでデノイズor中間層を特徴量に追加(Nakayamaさんこれ好きなイメージ)
 - [ ] メトリックラーニングをAEに適応して、他のモデルの特徴量にする (クラスタリングの重心を特徴量に加えるイメージ)
-- [ ] Pseudolabeling
-- [ ] label powerset (マルチラベルタスクをマルチクラスタスクに変換するらしい. これを使えばSVMやlgbも一つのモデルでOKなのでは?)[http://scikit.ml/api/skmultilearn.problem_transform.lp.html](http://scikit.ml/api/skmultilearn.problem_transform.lp.html)
-- [ ] kernel Ridge [https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets](https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets)
-- [ ] 計算量軽めモデルのハイパラチューニング[すごい重要らしい](https://www.kaggle.com/c/lish-moa/discussion/180918#1000976)
+* モデル構造
 - [ ] Tabunetの中間層でグループを作成すると,全結合のみよりもCVがgood
 - [ ] split NN keras[https://www.kaggle.com/gogo827jz/split-neural-network-approach-tf-keras](https://www.kaggle.com/gogo827jz/split-neural-network-approach-tf-keras)
 - [ ] TabNet num_decision_steps = 1 makes OOF score much better [https://www.kaggle.com/gogo827jz/moa-stacked-tabnet-baseline-tensorflow-2-0](https://www.kaggle.com/gogo827jz/moa-stacked-tabnet-baseline-tensorflow-2-0)
-- [ ] label smooth 
-- トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup
+* データの前処理
+- [ ] label smooth
+- [ ] トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup
 - [ ] pretictのlowerとupperをclip
-- [ ] コントロールの出力を全て確認。もしかしたらすべて0かもしれない
+- [ ] コントロールの出力を全て確認。もしかしたらすべて0かも
+- [ ] バランシングの適応
+- [ ] Pseudolabeling
 - [ ] アップサンプリング[https://www.kaggle.com/c/lish-moa/discussion/187419](https://www.kaggle.com/c/lish-moa/discussion/187419)
     * [ノートブック](https://www.kaggle.com/tolgadincer/upsampling-multilabel-data-with-mlsmote)
     * [CVの方法のノートブック](https://www.kaggle.com/tolgadincer/mlsmote)
 - [ ] ImbalancedDataSampler[pytorchの実装github](https://github.com/ufoym/imbalanced-dataset-sampler)
-
+* 西山タスク
+- [ ] SVM
+- [ ] lgbm
+- [ ] xggb
+- [ ] kernel Ridge [https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets](https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets)
+- [ ] label smooth 
+- [ ] 計算量軽めモデルのハイパラチューニング[すごい重要らしい](https://www.kaggle.com/c/lish-moa/discussion/180918#1000976)
+- [ ] label powerset (マルチラベルタスクをマルチクラスタスクに変換するらしい. これを使えばSVMやlgbも一つのモデルでOKなのでは?)[http://scikit.ml/api/skmultilearn.problem_transform.lp.html](http://scikit.ml/api/skmultilearn.problem_transform.lp.html)
+- [ ] トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup
 
 ## On Going
 - Neural Oblivious Decision Ensembles(NNで作った多段決定木をredualに結合して出力)
