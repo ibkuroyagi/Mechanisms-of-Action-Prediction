@@ -14,3 +14,4 @@ matplotlib
 kaggle
 black
 flake8
+tensorflow

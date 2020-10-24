@@ -1,14 +1,3 @@
-config = {
-    "seed": 42,
-    "node_params": {
-        "layer_dim": 16,
-        "num_layers": 4,
-        "tree_dim": 1,
-        "depth": 6,
-        "input_dropout": 0.3,
-        "flatten_output": True,
-    },
-}
 top_feats = [
     1,
     2,

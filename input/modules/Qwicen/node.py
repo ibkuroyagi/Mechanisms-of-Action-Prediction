@@ -622,12 +622,14 @@ class NODE(nn.Module):
         )
         self.b1 = nn.BatchNorm1d(layer_dim * num_layers * tree_dim)
         self.dropout0 = nn.Dropout(input_dropout)
-        self.out_layer = nn.utils.weight_norm(nn.Linear(layer_dim * num_layers * tree_dim, out_dim))
+        self.out_layer = nn.utils.weight_norm(
+            nn.Linear(layer_dim * num_layers * tree_dim, out_dim)
+        )
 
     def forward(self, input):
         x = self.b0(input)
         x = self.dense_layer(x)
         x = self.b1(x)
         x = self.dropout0(x)
-        x = torch.sigmoid(self.out_layer(x))
+        x = self.out_layer(x)
         return x
