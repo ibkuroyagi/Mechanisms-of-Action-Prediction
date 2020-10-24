@@ -1,4 +1,5 @@
 # %%
+import logging
 import sys
 import os
 import datetime
@@ -23,13 +24,15 @@ sys.path.append("../input/facebookresearch")
 sys.path.append("../input/Qwicen")
 sys.path.append("../input/utils")
 from utils import seed_everything
-from utils import config
-from utils import top_feats
-from Qwicen import NODE
+from variables import config
+from variables import top_feats
+from node import NODE
+from qhoptim import QHAdam
 
 # sys.path.append('../input/iterative-stratification/iterative-stratification-master')
 warnings.filterwarnings("ignore")
-
+logging.info("Successfully load modules.")
+outdir = "exp/fix_optim"
 # %%
 train_features = pd.read_csv("../input/lish-moa/train_features.csv")
 train_targets = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
@@ -37,8 +40,9 @@ train_nontargets = pd.read_csv("../input/lish-moa/train_targets_nonscored.csv")
 
 test_features = pd.read_csv("../input/lish-moa/test_features.csv")
 ss = pd.read_csv("../input/lish-moa/sample_submission.csv")
+logging.info("Successfully load input files.")
 
-# %%
+
 def preprocess(df):
     df = df.copy()
     df.loc[:, "cp_type"] = df.loc[:, "cp_type"].map({"trt_cp": 0, "ctl_vehicle": 1})
@@ -55,12 +59,8 @@ del train_targets["sig_id"]
 train_targets = train_targets.loc[train["cp_type"] == 0].reset_index(drop=True)
 train = train.loc[train["cp_type"] == 0].reset_index(drop=True)
 
-
-# %%
-
-
-seed_everything(42)
-
+seed_everything(config["seed"])
+logging.info("Successfully preprocessed.")
 
 # %%
 nfolds = 10
@@ -77,8 +77,6 @@ criterion = nn.BCELoss()
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-# %%
-# dataset class
 class MoaDataset(Dataset):
     def __init__(self, df, targets, feats_idx, mode="train"):
         self.mode = mode
@@ -115,6 +113,7 @@ for seed in range(nstarts):
 
     kfold = MultilabelStratifiedKFold(n_splits=nfolds, random_state=seed, shuffle=True)
     for n, (tr, te) in enumerate(kfold.split(train_targets, train_targets)):
+        logging.info(f"Start to train fold {nn}.")
         start_time = time.time()
         xtrain, xval = train[tr], train[te]
         ytrain, yval = train_targets[tr], train_targets[te]
@@ -126,29 +125,17 @@ for seed in range(nstarts):
             "train": DataLoader(train_set, batch_size=batch_size, shuffle=True),
             "val": DataLoader(val_set, batch_size=val_batch_size, shuffle=False),
         }
-
-        # model = nn.Sequential(
-        #     nn.BatchNorm1d(len(top_feats)),
-        #     DenseBlock(
-        #         len(top_feats),
-        #         layer_dim=16,
-        #         num_layers=4,
-        #         tree_dim=512,
-        #         depth=6,
-        #         input_dropout=0.3,
-        #         flatten_output=True,
-        #         choice_function=entmax15,
-        #         bin_function=entmoid15,
-        #     ),
-        #     nn.BatchNorm1d(16 * 4 * 512),
-        #     nn.Dropout(0.5),
-        #     nn.utils.weight_norm(nn.Linear(16 * 4 * 512, 206)),
-        #     nn.Sigmoid(),
-        # ).to(device)
-        model = NODE(**config["node_params"])
-        checkpoint_path = f"Model_{seed}_Fold_{n+1}.pt"
-        optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
-        #         optimizer = QHAdam(model.parameters(), lr = 1e-3, nus = (0.7, 1.0), betas = (0.95, 0.998), weight_decay = 1e-5)
+        model = NODE(input_dim=len(top_feats), out_dim=206, **config["node_params"]).to(
+            device
+        )
+        checkpoint_path = os.path.join(outdir, f"Model_{seed}_Fold_{n+1}.pt")
+        optimizer = QHAdam(
+            model.parameters(),
+            lr=1e-3,
+            nus=(0.7, 1.0),
+            betas=(0.95, 0.998),
+            weight_decay=1e-5,
+        )
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(
             optimizer, mode="min", factor=0.1, patience=10, eps=1e-4, verbose=False
         )
@@ -209,7 +196,6 @@ for seed in range(nstarts):
                 best_loss["val"],
             )
         )
-        break
 
 
 # %%
@@ -228,9 +214,6 @@ def mean_log_loss(y_true, y_pred):
     return np.mean(metrics)
 
 
-# # Inference
-
-# %%
 for seed in range(nstarts):
     print(f"Inference for seed {seed}")
     seed_targets = []
@@ -249,26 +232,10 @@ for seed in range(nstarts):
             "test": DataLoader(test_set, batch_size=val_batch_size, shuffle=False),
         }
 
-        checkpoint_path = f"Model_{seed}_Fold_{n+1}.pt"
-        # model = nn.Sequential(
-        #     nn.BatchNorm1d(len(top_feats)),
-        #     DenseBlock(
-        #         len(top_feats),
-        #         layer_dim=16,
-        #         num_layers=4,
-        #         tree_dim=512,
-        #         depth=6,
-        #         input_dropout=0.3,
-        #         flatten_output=True,
-        #         choice_function=entmax15,
-        #         bin_function=entmoid15,
-        #     ),
-        #     nn.BatchNorm1d(16 * 4 * 512),
-        #     nn.Dropout(0.5),
-        #     nn.utils.weight_norm(nn.Linear(16 * 4 * 512, 206)),
-        #     nn.Sigmoid(),
-        # ).to(device)
-        model = NODE(**config["node_params"])
+        checkpoint_path = os.path.join(outdir, f"Model_{seed}_Fold_{n+1}.pt")
+        model = NODE(input_dim=len(top_feats), out_dim=206, **config["node_params"]).to(
+            device
+        )
         model.load_state_dict(torch.load(checkpoint_path))
         model.eval()
 
@@ -290,7 +257,6 @@ for seed in range(nstarts):
 
         fold_preds = torch.cat(fold_preds, dim=0).cpu().numpy()
         seed_preds[:, :, n] = fold_preds
-        break
 
     seed_targets = torch.cat(seed_targets, dim=0).cpu().numpy()
     seed_oof = torch.cat(seed_oof, dim=0).cpu().numpy()
@@ -302,12 +268,10 @@ for seed in range(nstarts):
     preds += seed_preds / nstarts
 
 
-# %%
 oof = np.mean(oof, axis=1)
 print("Overall score is {:5.5f}".format(mean_log_loss(oof_targets, oof)))
 
 
-# %%
 ss[targets] = preds
 ss.loc[test_features["cp_type"] == "ctl_vehicle", targets] = 0
 ss.to_csv("submission_tmp.csv", index=False)

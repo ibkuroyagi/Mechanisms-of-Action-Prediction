@@ -24,7 +24,8 @@ coverage.xml*
 .worktree
 *.log
 # input dataset
-input/
+input/lish-moa/
+input/iterative-stratification-master/
 # venv
 venv/
 # results
