@@ -15,16 +15,12 @@ log() {
 stage=-1       # stage to start
 stop_stage=100 # stage to stop
 n_gpus=1       # number of gpus for training
+config=conf/node.yaml
 verbose=1      # verbosity level, higher is more logging
 
 # directory related
-expdir=exp_tablenet            # directory to save experiments
-cache_dir=""          # bert cache dir (if empty, automatically download)
-
-# utt score related
-save_type=pkl  # select json or pkl
-
-tag="baseline"    # tag for manangement of the naming of experiments
+expdir=exp          # directory to save experiments
+tag="base"    # tag for manangement of the naming of experiments
 
 # evaluation related
 checkpoint=""          # path of checkpoint to be used for evaluation
@@ -38,6 +34,9 @@ if [ "${stage}" -le 2 ] && [ "${stop_stage}" -ge 2 ]; then
     log "Training start. See the progress via ${outdir}/train.log"
     # shellcheck disable=SC2086
     ${train_cmd} --gpu "${n_gpus}" "${outdir}/train.log" \
-        python tab_base.py
+        python tab_base.py \
+            --outdir "${outdir}" \
+            --config "${config}" \
+            --verbose "${verbose}"
     log "Successfully finished the training."
 fi

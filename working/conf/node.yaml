@@ -9,21 +9,21 @@ seed: 1
 #                     NETWORK SETTING                     #
 ###########################################################
 model_params:
-  layer_dim": 16
-  num_layers": 4
-  tree_dim": 1
-  depth": 6
-  input_dropout": 0.3
-  flatten_output": True
+  layer_dim: 16
+  num_layers: 4
+  tree_dim: 1
+  depth: 6
+  input_dropout: 0.3
+  flatten_output: True
 out_dim: 206
 ###########################################################
 #                    TRAINING SETTING                     #
 ###########################################################
 n_fold: 5
-n_epoch: 200
 batch_size: 128
 num_workers: 2
 pin_memory: True
+accum_grads: 1
 ###########################################################
 #                       LOSS SETTING                      #
 ###########################################################
@@ -34,8 +34,8 @@ loss_params:
 ###########################################################
 #              OPTIMIZER & SCHEDULER SETTING              #
 ###########################################################
-optim_type: QHAdam
-optim_params:
+optimizer_type: QHAdam
+optimizer_params:
   lr: 1.0e-3
   nus: [0.7, 1.0]
   betas: [0.95, 0.998]
@@ -46,5 +46,10 @@ scheduler_params:
   mode: min
   factor: 0.1
   patience: 10
-  esp: 1.0e-4
   verbose: False
+  
+###########################################################
+#                    INTERVAL SETTING                     #
+###########################################################
+train_max_steps: 40000 # Number of training steps.
+save_interval_steps: 5000 # Interval steps to save checkpoint.
