@@ -28,6 +28,7 @@ from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 from Tab_dataset import MoaDataset
 from node import NODE
 from qhoptim import QHAdam
+from tab_trainer import mean_log_loss
 from tab_trainer import TabTrainer
 from utils import seed_everything
 from variables import top_feats
@@ -103,8 +104,8 @@ def main():
     train = train.values
     test = test.values
     train_targets = train_targets.values
-    # ntargets = train_targets.shape[1]
-    # targets = [col for col in train_targets.columns]
+    ntargets = train_targets.shape[1]
+    targets = [col for col in train_targets.columns]
     logging.info("Successfully preprocessed.")
 
     loss_class = getattr(
@@ -118,24 +119,26 @@ def main():
     kfold = MultilabelStratifiedKFold(
         n_splits=config["n_fold"], random_state=config["seed"], shuffle=True
     )
+    eval_set = MoaDataset(test, None, top_feats, mode="test")
+    eval_loader = {
+        "eval": DataLoader(
+            eval_set,
+            batch_size=config["batch_size"],
+            num_workers=config["num_workers"],
+            pin_memory=config["pin_memory"],
+            shuffle=False,
+        ),
+    }
+    oof_targets = np.zeros((len(train), ntargets))
+    preds = np.zeros((config["n_fold"], len(test), ntargets))
     for n, (tr, te) in enumerate(kfold.split(train_targets, train_targets)):
         logging.info(f"Start to train fold {n}.")
-        xtrain, xval = train[tr], train[te]
-        ytrain, yval = train_targets[tr], train_targets[te]
-
-        train_set = MoaDataset(xtrain, ytrain, top_feats)
-        val_set = MoaDataset(xval, yval, top_feats)
-
-        data_loader = {
-            "train": DataLoader(
-                train_set,
-                batch_size=config["batch_size"],
-                num_workers=config["num_workers"],
-                pin_memory=config["pin_memory"],
-                shuffle=True,
-            ),
-            "dev": DataLoader(
-                val_set,
+        xval = train[te]
+        yval = train_targets[te]
+        dev_set = MoaDataset(xval, yval, top_feats)
+        dev_loader = {
+            "eval": DataLoader(
+                dev_set,
                 batch_size=config["batch_size"],
                 num_workers=config["num_workers"],
                 pin_memory=config["pin_memory"],
@@ -147,114 +150,53 @@ def main():
             out_dim=config["out_dim"],
             **config["model_params"],
         ).to(device)
-
-        if config["optimizer_type"] == "QHAdam":
-            optimizer_class = QHAdam
-        else:
-            optimizer_class = getattr(
-                torch.optim,
-                # keep compatibility
-                config.get("optimizer_type", "Adam"),
-            )
-        optimizer = optimizer_class(
-            params=model.parameters(), **config["optimizer_params"]
-        )
-
-        scheduler_class = getattr(
-            torch.optim.lr_scheduler,
-            # keep compatibility
-            config.get("scheduler_type", "StepLR"),
-        )
-        scheduler = scheduler_class(optimizer=optimizer, **config["scheduler_params"])
+        # develop data
         trainer = TabTrainer(
             steps=0,
             epochs=0,
-            data_loader=data_loader,
+            data_loader=dev_loader,
             model=model.to(device),
             criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
+            optimizer={},
+            scheduler={},
             config=config,
             device=device,
             add_name=f"{n}fold",
         )
-        # resume from checkpoint
-        if len(args.resume) != 0:
-            trainer.load_checkpoint(args.resume)
-            logging.info(f"Successfully resumed from {args.resume}.")
-
+        trainer.load_checkpoint(args.checkpoint[n])
+        logging.info(f"Successfully load checkpoint from {args.resume}.")
+        oof_targets[te] = trainer.inference()
+        logging.info(f"Successfully inference dev data at fold{n}.")
+        fold_score = mean_log_loss(oof_targets[te], yval)
+        logging.info(f"fold{n} score: {fold_score:.5f}.")
+        # eval data
+        trainer = TabTrainer(
+            steps=0,
+            epochs=0,
+            data_loader=eval_loader,
+            model=model.to(device),
+            criterion=criterion,
+            optimizer={},
+            scheduler={},
+            config=config,
+            device=device,
+            add_name=f"{n}fold",
+        )
+        trainer.load_checkpoint(args.checkpoint[n])
+        logging.info(f"Successfully load checkpoint from {args.resume}.")
         # run training loop
-        try:
-            trainer.run()
-        except KeyboardInterrupt:
-            trainer.save_checkpoint(
-                os.path.join(config["outdir"], f"checkpoint-{trainer.steps}steps.pkl")
-            )
-            logging.info(f"Successfully saved checkpoint @ {trainer.steps}steps.")
-    # oof = np.zeros((len(train), nstarts, ntargets))
-    # oof_targets = np.zeros((len(train), ntargets))
-    # preds = np.zeros((len(test), ntargets))
-
-    # # %%
-
-    # print(f"Inference for seed {seed}")
-    # seed_targets = []
-    # seed_oof = []
-    # seed_preds = np.zeros((len(test), ntargets, nfolds))
-
-    # for n, (tr, te) in enumerate(kfold.split(train_targets, train_targets)):
-    #     xval, yval = train[te], train_targets[te]
-    #     fold_preds = []
-
-    #     val_set = MoaDataset(xval, yval, top_feats)
-    #     test_set = MoaDataset(test, None, top_feats, mode="test")
-
-    #     dataloaders = {
-    #         "val": DataLoader(val_set, batch_size=val_batch_size, shuffle=False),
-    #         "test": DataLoader(test_set, batch_size=val_batch_size, shuffle=False),
-    #     }
-
-    #     checkpoint_path = os.path.join(outdir, f"Model_{seed}_Fold_{n+1}.pt")
-    #     model = NODE(
-    #         input_dim=len(top_feats), out_dim=206, **config["model_params"]
-    #     ).to(device)
-    #     model.load_state_dict(torch.load(checkpoint_path))
-    #     model.eval()
-
-    #     for phase in ["val", "test"]:
-    #         for i, (x, y) in enumerate(dataloaders[phase]):
-    #             if phase == "val":
-    #                 x, y = x.to(device), y.to(device)
-    #             elif phase == "test":
-    #                 x = x.to(device)
-
-    #             with torch.no_grad():
-    #                 batch_preds = model(x)
-
-    #                 if phase == "val":
-    #                     seed_targets.append(y)
-    #                     seed_oof.append(batch_preds)
-    #                 elif phase == "test":
-    #                     fold_preds.append(batch_preds)
-
-    #     fold_preds = torch.cat(fold_preds, dim=0).cpu().numpy()
-    #     seed_preds[:, :, n] = fold_preds
-
-    # seed_targets = torch.cat(seed_targets, dim=0).cpu().numpy()
-    # seed_oof = torch.cat(seed_oof, dim=0).cpu().numpy()
-    # seed_preds = np.mean(seed_preds, axis=2)
-
-    # print("Score for this seed {:5.5f}".format(mean_log_loss(seed_targets, seed_oof)))
-    # oof_targets = seed_targets
-    # oof[:, seed, :] = seed_oof
-    # preds += seed_preds / nstarts
-
-    # oof = np.mean(oof, axis=1)
-    # print("Overall score is {:5.5f}".format(mean_log_loss(oof_targets, oof)))
-
-    # ss[targets] = preds
-    # ss.loc[test_features["cp_type"] == "ctl_vehicle", targets] = 0
-    # ss.to_csv("submission_tmp.csv", index=False)
+        preds[n] = trainer.inference()
+        logging.info(f"Successfully inference eval data at fold{n}.")
+    cv_score = mean_log_loss(oof_targets, train_targets)
+    logging.info(f"CV score: {cv_score:.5f}")
+    train_targets = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
+    train_targets[targets] = oof_targets
+    train_targets.to_csv("oof.csv", index=False)
+    preds_mean = preds.mean(axis=0)
+    ss = pd.read_csv("../input/lish-moa/sample_submission.csv")
+    ss[targets] = preds_mean
+    ss.loc[test_features["cp_type"] == "ctl_vehicle", targets] = 0
+    ss.to_csv("submission_tmp.csv", index=False)
 
 
 if __name__ == "__main__":

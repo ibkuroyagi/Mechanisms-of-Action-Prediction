@@ -157,9 +157,12 @@ rm lish-moa.zip iterative-stratification.zipsssssss
     - 今日やったこと
         * ベースラインの改造
     - 次回やること
-        * ベースラインの改造
-        * スタッキングノートブック作成方法を模索
-
+        * ベースラインによる提出 (5fold NODE QHAdam model) 
+- 10/24(土)
+    - 今日やったこと
+        * ベースラインによる提出 (5fold NODE QHAdam model)
+    - 次回やること
+        * 埋め込み特徴量追加
 </div></details>
 
 ### External code

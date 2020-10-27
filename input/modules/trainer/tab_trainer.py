@@ -38,7 +38,7 @@ class TabTrainer(object):
         config,
         device=torch.device("cpu"),
         train=False,
-        fold="",
+        add_name="",
     ):
         """Initialize trainer.
 
@@ -63,8 +63,7 @@ class TabTrainer(object):
         self.scheduler = scheduler
         self.config = config
         self.device = device
-        self.train = train
-        self.fold = fold
+        self.add_name = add_name
         if train:
             self.writer = SummaryWriter(config["outdir"])
         self.finish_train = False
@@ -138,7 +137,9 @@ class TabTrainer(object):
             loss = self.criterion(y_, y)
         loss = loss / self.config["accum_grads"]
         self.epoch_train_loss["train/loss"] += (
-            loss.item() / batch_size * self.config["accum_grads"]
+            loss.item()
+            / (batch_size * self.config["out_dim"] * len(self.data_loader["train"]))
+            * self.config["accum_grads"]
         )
         loss.backward()
         self.forward_count += 1
@@ -163,6 +164,7 @@ class TabTrainer(object):
         for train_steps_per_epoch, batch in enumerate(self.data_loader["train"], 1):
             # train one step
             self._train_step(batch)
+            self._check_save_interval()
             # check whether training is finished
             if self.finish_train:
                 return
@@ -191,7 +193,7 @@ class TabTrainer(object):
         )
         for key in self.epoch_train_loss.keys():
             logging.info(
-                f"(Epoch: {self.epochs}) {key} = {self.epoch_train_loss[key]:.4f}."
+                f"(Epoch: {self.epochs}) {key} = {self.epoch_train_loss[key]:.5f}."
             )
         self._write_to_tensorboard(self.epoch_train_loss)
         # update
@@ -212,15 +214,17 @@ class TabTrainer(object):
         y = y.to(self.device)
         y_ = self.model(x)
         # add to total eval loss
-        y_ = torch.sigmoid(y_).cpu().numpy()
         if self.config["loss_type"] == "BCELoss":
             loss = self.criterion(torch.sigmoid(y_), y)
         else:
             loss = self.criterion(y_, y)
         loss = loss / self.config["accum_grads"]
         self.epoch_eval_loss["dev/loss"] += (
-            loss.item() / batch_size * self.config["accum_grads"]
+            loss.item()
+            / (batch_size * self.config["out_dim"] * len(self.data_loader["dev"]))
+            * self.config["accum_grads"]
         )
+        y_ = torch.sigmoid(y_).cpu().numpy()
         self.dev_pred_epoch = np.concatenate([self.dev_pred_epoch, y_], axis=0)
         y = y.cpu().numpy()
         self.dev_y_epoch = np.concatenate([self.dev_y_epoch, y], axis=0)
@@ -255,15 +259,15 @@ class TabTrainer(object):
         self.epoch_eval_loss["dev/epoch_precision"] = precision_score(
             self.dev_y_epoch.flatten(), preds, zero_division=0
         )
-        if self.best_loss < self.epoch_eval_loss["dev/loss"]:
+        if self.best_loss > self.epoch_eval_loss["dev/epoch_metric"]:
             self.save_checkpoint(
                 os.path.join(
                     self.config["outdir"],
                     "best",
-                    f"best_loss{self.fold}fold.pkl",
+                    f"best_loss{self.add_name}.pkl",
                 )
             )
-            self.best_loss = self.epoch_eval_loss["dev/loss"]
+            self.best_loss = self.epoch_eval_loss["dev/epoch_metric"]
         # log
         logging.info(
             f"(Steps: {self.steps}) Finished dev data's evaluation "
@@ -271,7 +275,7 @@ class TabTrainer(object):
         )
         for key in self.epoch_eval_loss.keys():
             logging.info(
-                f"(Epoch: {self.epochs}) {key} = {self.epoch_eval_loss[key]:.4f}."
+                f"(Epoch: {self.epochs}) {key} = {self.epoch_eval_loss[key]:.5f}."
             )
         # average loss
         logging.info(f"(Steps: {self.steps}) Start eval data's evaluation.")
@@ -312,7 +316,7 @@ class TabTrainer(object):
                 os.path.join(
                     self.config["outdir"],
                     f"{self.steps}",
-                    f"checkpoint-{self.steps}steps{self.fold}fold.pkl",
+                    f"checkpoint-{self.steps}steps{self.add_name}.pkl",
                 )
             )
             logging.info(f"Successfully saved checkpoint @ {self.steps} steps.")

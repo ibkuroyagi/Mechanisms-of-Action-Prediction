@@ -15,12 +15,12 @@ log() {
 stage=-1       # stage to start
 stop_stage=100 # stage to stop
 n_gpus=1       # number of gpus for training
-config=conf/node.yaml
+conf=conf/node.yaml
 verbose=1      # verbosity level, higher is more logging
 
 # directory related
 expdir=exp          # directory to save experiments
-tag="base"    # tag for manangement of the naming of experiments
+tag="base/base"    # tag for manangement of the naming of experiments
 
 # evaluation related
 checkpoint=""          # path of checkpoint to be used for evaluation
@@ -28,7 +28,7 @@ checkpoint=""          # path of checkpoint to be used for evaluation
 . utils/parse_options.sh || exit 1;
 
 set -euo pipefail
-if [ "${stage}" -le 2 ] && [ "${stop_stage}" -ge 2 ]; then
+if [ "${stage}" -le 1 ] && [ "${stop_stage}" -ge 1 ]; then
     log "Stage 1: Network training"
     outdir=${expdir}/${tag}
     log "Training start. See the progress via ${outdir}/train.log"
@@ -36,7 +36,8 @@ if [ "${stage}" -le 2 ] && [ "${stop_stage}" -ge 2 ]; then
     ${train_cmd} --gpu "${n_gpus}" "${outdir}/train.log" \
         python tab_base.py \
             --outdir "${outdir}" \
-            --config "${config}" \
+            --config "${conf}" \
             --verbose "${verbose}"
     log "Successfully finished the training."
 fi
+
