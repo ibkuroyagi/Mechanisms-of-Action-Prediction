@@ -54,7 +54,11 @@ def main():
         "--outdir", type=str, required=True, help="Path of output directory."
     )
     parser.add_argument(
-        "--resume", type=str, default="", help="Path of resumed model file."
+        "--checkpoints",
+        type=str,
+        default="",
+        nargs="+",
+        help="list of checkpoints file.",
     )
     parser.add_argument(
         "--config", type=str, required=True, help="Path of config file."
@@ -93,19 +97,20 @@ def main():
     # preprocess
     train_features = pd.read_csv("../input/lish-moa/train_features.csv")
     train_targets = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
-    # train_nontargets = pd.read_csv("../input/lish-moa/train_targets_nonscored.csv")
     test_features = pd.read_csv("../input/lish-moa/test_features.csv")
     logging.info("Successfully load input files.")
     train = preprocess(train_features)
     test = preprocess(test_features)
     del train_targets["sig_id"]
-    train_targets = train_targets.loc[train["cp_type"] == 0].reset_index(drop=True)
-    train = train.loc[train["cp_type"] == 0].reset_index(drop=True)
+    train_idx = train["cp_type"] == 0
+    train_targets = train_targets.loc[train_idx].reset_index(drop=True)
+    targets = [col for col in train_targets.columns]
+    train = train.loc[train_idx].reset_index(drop=True)
     train = train.values
     test = test.values
     train_targets = train_targets.values
     ntargets = train_targets.shape[1]
-    targets = [col for col in train_targets.columns]
+
     logging.info("Successfully preprocessed.")
 
     loss_class = getattr(
@@ -163,11 +168,11 @@ def main():
             device=device,
             add_name=f"{n}fold",
         )
-        trainer.load_checkpoint(args.checkpoint[n])
-        logging.info(f"Successfully load checkpoint from {args.resume}.")
+        trainer.load_checkpoint(args.checkpoints[n])
+        logging.info(f"Successfully load checkpoint from {args.checkpoints[n]}.")
         oof_targets[te] = trainer.inference()
         logging.info(f"Successfully inference dev data at fold{n}.")
-        fold_score = mean_log_loss(oof_targets[te], yval)
+        fold_score = mean_log_loss(yval, oof_targets[te])
         logging.info(f"fold{n} score: {fold_score:.5f}.")
         # eval data
         trainer = TabTrainer(
@@ -182,22 +187,29 @@ def main():
             device=device,
             add_name=f"{n}fold",
         )
-        trainer.load_checkpoint(args.checkpoint[n])
-        logging.info(f"Successfully load checkpoint from {args.resume}.")
+        trainer.load_checkpoint(args.checkpoints[n])
+        logging.info(f"Successfully load checkpoint from {args.checkpoints[n]}.")
         # run training loop
         preds[n] = trainer.inference()
         logging.info(f"Successfully inference eval data at fold{n}.")
-    cv_score = mean_log_loss(oof_targets, train_targets)
+    # calculate oof score
+    cv_score = mean_log_loss(train_targets, oof_targets)
     logging.info(f"CV score: {cv_score:.5f}")
-    train_targets = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
-    train_targets[targets] = oof_targets
-    train_targets.to_csv("oof.csv", index=False)
+    train_targets_df = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
+    train_targets_df.loc[train_idx, targets] = oof_targets
+    oof_path = os.path.join(args.outdir, "oof.csv")
+    train_targets_df.to_csv(oof_path, index=False)
+    logging.info(f"saved at {oof_path}")
+    # calculate eval data's submission file
     preds_mean = preds.mean(axis=0)
     ss = pd.read_csv("../input/lish-moa/sample_submission.csv")
     ss[targets] = preds_mean
     ss.loc[test_features["cp_type"] == "ctl_vehicle", targets] = 0
-    ss.to_csv("submission_tmp.csv", index=False)
+    sub_path = os.path.join(args.outdir, "submission.csv")
+    ss.to_csv(sub_path, index=False)
+    logging.info(f"saved at {sub_path}")
 
 
+# (21948) does not match length of index (23814)
 if __name__ == "__main__":
     main()

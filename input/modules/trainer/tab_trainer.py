@@ -300,7 +300,7 @@ class TabTrainer(object):
         self.model.eval()
         with torch.no_grad():
             for batch in tqdm(self.data_loader["eval"]):
-                y_batch_ = self.model(batch["X"])
+                y_batch_ = self.model(batch["X"].to(self.device))
                 y_preds = torch.cat([y_preds, y_batch_], dim=0)
             y_preds = torch.sigmoid(y_preds)
         return y_preds.detach().cpu().numpy()
