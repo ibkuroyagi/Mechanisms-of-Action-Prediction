@@ -38,10 +38,10 @@
 - [https://www.kaggle.com/c/lish-moa/discussion/184005](https://www.kaggle.com/c/lish-moa/discussion/184005)
 * データの前処理
 - [ ] label smooth
-- [ ] トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup
+- [x] ~~ トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup ~~
 - [ ] pretictのlowerとupperをclip
-- [ ] コントロールの出力を全て確認。もしかしたらすべて0かも
-- [ ] Pseudolabeling
+- [x] ~~ コントロールの出力を全て確認。もしかしたらすべて0かも ~~
+- [ ] Pseudolabeling/noisy label training
 - [ ] バランシングの適応 (優先順位低め)
 - [ ] アップサンプリング[https://www.kaggle.com/c/lish-moa/discussion/187419](https://www.kaggle.com/c/lish-moa/discussion/187419)
     * [ノートブック](https://www.kaggle.com/tolgadincer/upsampling-multilabel-data-with-mlsmote)
@@ -52,8 +52,9 @@
     - [ ] ノンスコアのターゲットを予測し、その後のモデルのメタ特徴として使用
     - [ ] ノンスコアのターゲットも含めたモデルで学習する
 * 畔栁タスク
-    - [x] TabNetベースライン作成
+    - [x] ~~ TabNetベースライン作成 ~~
     - [ ] カテゴリ変数を埋め込み特徴量として学習
+    - [ ] noisy label training
     - [ ] AEでデノイズor中間層を特徴量に追加(Nakayamaさんこれ好きなイメージ)
     - [ ] メトリックラーニングをAEに適応して、他のモデルの特徴量にする (クラスタリングの重心を特徴量に加えるイメージ)
     * モデル構造
@@ -133,11 +134,11 @@ rm lish-moa.zip iterative-stratification.zipsssssss
         * チームアップのミーティング！
         * リポジトリ作成&コンペの理解
     - 次回やること
-        * TabularNetの実行&推論結果を作成
+        * NODEの実行&推論結果を作成
         * ToDo埋める
 - 10/15(木)
     - 今日やったこと
-        * TabularNetの実行&推論結果を作成
+        * NODEの実行&推論結果を作成
     - 次回やること
         * kernelにモデルをアップロードしてsubmitを成功させる
 - 10/19(月)
@@ -158,11 +159,22 @@ rm lish-moa.zip iterative-stratification.zipsssssss
         * ベースラインの改造
     - 次回やること
         * ベースラインによる提出 (5fold NODE QHAdam model) 
-- 10/24(土)
+- 10/25(日)
     - 今日やったこと
-        * ベースラインによる提出 (5fold NODE QHAdam model)
+        * ベースラインの改造
     - 次回やること
-        * 埋め込み特徴量追加
+        * 推論コード作成
+- 10/27(火)
+    - 今日やったこと
+        * 定例ミーティング
+        * 推論コード作成&QHAdamのパラメータ調整v000
+    - 次回やること
+        * 推論コード完成
+- 10/28(水)
+    - 今日やったこと
+        * 推論コード完成
+    - 次回やること
+        * ノートブックから提出
 </div></details>
 
 ### External code

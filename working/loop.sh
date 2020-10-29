@@ -14,28 +14,17 @@ verbose=1
 No=000
 conf="conf/tuning/node.v${No}.yaml"
 tag="node/v${No}"
-# echo "tag:${tag}, conf:${conf}"
-# for step in 25000 30000 35000 40000; do
-#     checkpoint="checkpoint-${step}steps"
-#     sbatch -J "M.${tag}" ./run.sh \
-#         --stage "${stage}" \
-#         --tag "${tag}" \
-#         --verbose "${verbose}" \
-#         --checkpoint "${checkpoint}" \
-#         --step "${step}" \
-#         --conf "${conf}"
-# done
-# checkpoint="best_loss"
-# sbatch -J "M.${tag}" ./run.sh \
-#     --stage "${stage}" \
-#     --tag "${tag}" \
-#     --verbose "${verbose}" \
-#     --checkpoint "${checkpoint}" \
-#     --step "best" \
-#     --conf "${conf}"
-
-conf="conf/node.yaml"
-tag="node/base"
+echo "tag:${tag}, conf:${conf}"
+for step in 25000 30000 35000 40000; do
+    checkpoint="checkpoint-${step}steps"
+    sbatch -J "M.${tag}" ./run.sh \
+        --stage "${stage}" \
+        --tag "${tag}" \
+        --verbose "${verbose}" \
+        --checkpoint "${checkpoint}" \
+        --step "${step}" \
+        --conf "${conf}"
+done
 checkpoint="best_loss"
 sbatch -J "M.${tag}" ./run.sh \
     --stage "${stage}" \
@@ -44,4 +33,3 @@ sbatch -J "M.${tag}" ./run.sh \
     --checkpoint "${checkpoint}" \
     --step "best" \
     --conf "${conf}"
-

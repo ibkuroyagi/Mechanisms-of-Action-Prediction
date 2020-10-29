@@ -112,14 +112,6 @@ def main():
     ntargets = train_targets.shape[1]
 
     logging.info("Successfully preprocessed.")
-
-    loss_class = getattr(
-        torch.nn,
-        # keep compatibility
-        config.get("loss_type", "BCELoss"),
-    )
-    criterion = loss_class(**config["loss_params"]).to(device)
-
     # for GPU/CPU
     kfold = MultilabelStratifiedKFold(
         n_splits=config["n_fold"], random_state=config["seed"], shuffle=True
@@ -161,7 +153,7 @@ def main():
             epochs=0,
             data_loader=dev_loader,
             model=model.to(device),
-            criterion=criterion,
+            criterion={},
             optimizer={},
             scheduler={},
             config=config,
@@ -173,14 +165,16 @@ def main():
         oof_targets[te] = trainer.inference()
         logging.info(f"Successfully inference dev data at fold{n}.")
         fold_score = mean_log_loss(yval, oof_targets[te])
-        logging.info(f"fold{n} score: {fold_score:.5f}.")
+        logging.info(
+            f"fold{n} score: {fold_score:.6f}, Step:{trainer.steps}, Epoch:{trainer.epochs}."
+        )
         # eval data
         trainer = TabTrainer(
             steps=0,
             epochs=0,
             data_loader=eval_loader,
             model=model.to(device),
-            criterion=criterion,
+            criterion={},
             optimizer={},
             scheduler={},
             config=config,
@@ -194,7 +188,7 @@ def main():
         logging.info(f"Successfully inference eval data at fold{n}.")
     # calculate oof score
     cv_score = mean_log_loss(train_targets, oof_targets)
-    logging.info(f"CV score: {cv_score:.5f}")
+    logging.info(f"CV score: {cv_score:.6f}")
     train_targets_df = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
     train_targets_df.loc[train_idx, targets] = oof_targets
     oof_path = os.path.join(args.outdir, "oof.csv")
@@ -210,6 +204,5 @@ def main():
     logging.info(f"saved at {sub_path}")
 
 
-# (21948) does not match length of index (23814)
 if __name__ == "__main__":
     main()

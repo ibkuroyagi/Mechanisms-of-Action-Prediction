@@ -26,6 +26,7 @@ coverage.xml*
 # input dataset
 input/lish-moa/
 input/iterative-stratification-master/
+input/models/
 # venv
 venv/
 # results
