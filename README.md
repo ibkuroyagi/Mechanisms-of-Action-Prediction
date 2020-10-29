@@ -175,6 +175,17 @@ rm lish-moa.zip iterative-stratification.zipsssssss
         * 推論コード完成
     - 次回やること
         * ノートブックから提出
+- 10/28(水)
+    - 今日やったこと
+        * 推論コード完成
+    - 次回やること
+        * ノートブックから提出
+- 10/29(木)
+    - 今日やったこと
+        * ノートブックから提出
+        * LabelSmoothLoss実装
+    - 次回やること
+        * LabelSmoothLossノートブックから提出
 </div></details>
 
 ### External code

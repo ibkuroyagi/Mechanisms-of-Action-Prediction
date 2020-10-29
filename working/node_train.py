@@ -2,35 +2,33 @@
 # -*- coding: utf-8 -*-
 
 # Copyright 2020 Ibuki Kuroyanagi
-# %%
 import argparse
 import logging
-import sys
 import os
+import sys
 import warnings
 
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import torch
 import yaml
 from torch.utils.data import DataLoader
 
-sys.path.append(
-    "../input/modules/iterative-stratification/iterative-stratification-master"
-)
+sys.path.append("../input/iterative-stratification/iterative-stratification-master")
 sys.path.append("../input/modules/datasets")
 sys.path.append("../input/modules/facebookresearch")
+sys.path.append("../input/modules/losses")
 sys.path.append("../input/modules/Qwicen")
 sys.path.append("../input/modules/trainer")
 sys.path.append("../input/modules/utils")
 from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
-from Tab_dataset import MoaDataset
+from label_smooth_loss import SmoothBCEwLogits
 from node import NODE
 from qhoptim import QHAdam
+from Tab_dataset import MoaDataset
 from tab_trainer import TabTrainer
-from utils import seed_everything
 from variables import top_feats
+
+from utils import seed_everything
 
 warnings.filterwarnings("ignore")
 
@@ -43,7 +41,6 @@ def preprocess(df):
     return df
 
 
-# %%
 def main():
     """Run training process."""
     parser = argparse.ArgumentParser(
@@ -103,15 +100,15 @@ def main():
     train = train.values
     test = test.values
     train_targets = train_targets.values
-    # ntargets = train_targets.shape[1]
-    # targets = [col for col in train_targets.columns]
     logging.info("Successfully preprocessed.")
-
-    loss_class = getattr(
-        torch.nn,
-        # keep compatibility
-        config.get("loss_type", "BCELoss"),
-    )
+    if config.get("loss_type", "BCELoss") == "SmoothBCEwLogits":
+        loss_class = SmoothBCEwLogits
+    else:
+        loss_class = getattr(
+            torch.nn,
+            # keep compatibility
+            config.get("loss_type", "BCELoss"),
+        )
     criterion = loss_class(**config["loss_params"]).to(device)
 
     # for GPU/CPU
@@ -185,76 +182,13 @@ def main():
 
         # run training loop
         try:
+            logging.info("Start training!")
             trainer.run()
         except KeyboardInterrupt:
             trainer.save_checkpoint(
                 os.path.join(config["outdir"], f"checkpoint-{trainer.steps}steps.pkl")
             )
             logging.info(f"Successfully saved checkpoint @ {trainer.steps}steps.")
-    # oof = np.zeros((len(train), nstarts, ntargets))
-    # oof_targets = np.zeros((len(train), ntargets))
-    # preds = np.zeros((len(test), ntargets))
-
-    # # %%
-
-    # print(f"Inference for seed {seed}")
-    # seed_targets = []
-    # seed_oof = []
-    # seed_preds = np.zeros((len(test), ntargets, nfolds))
-
-    # for n, (tr, te) in enumerate(kfold.split(train_targets, train_targets)):
-    #     xval, yval = train[te], train_targets[te]
-    #     fold_preds = []
-
-    #     val_set = MoaDataset(xval, yval, top_feats)
-    #     test_set = MoaDataset(test, None, top_feats, mode="test")
-
-    #     dataloaders = {
-    #         "val": DataLoader(val_set, batch_size=val_batch_size, shuffle=False),
-    #         "test": DataLoader(test_set, batch_size=val_batch_size, shuffle=False),
-    #     }
-
-    #     checkpoint_path = os.path.join(outdir, f"Model_{seed}_Fold_{n+1}.pt")
-    #     model = NODE(
-    #         input_dim=len(top_feats), out_dim=206, **config["model_params"]
-    #     ).to(device)
-    #     model.load_state_dict(torch.load(checkpoint_path))
-    #     model.eval()
-
-    #     for phase in ["val", "test"]:
-    #         for i, (x, y) in enumerate(dataloaders[phase]):
-    #             if phase == "val":
-    #                 x, y = x.to(device), y.to(device)
-    #             elif phase == "test":
-    #                 x = x.to(device)
-
-    #             with torch.no_grad():
-    #                 batch_preds = model(x)
-
-    #                 if phase == "val":
-    #                     seed_targets.append(y)
-    #                     seed_oof.append(batch_preds)
-    #                 elif phase == "test":
-    #                     fold_preds.append(batch_preds)
-
-    #     fold_preds = torch.cat(fold_preds, dim=0).cpu().numpy()
-    #     seed_preds[:, :, n] = fold_preds
-
-    # seed_targets = torch.cat(seed_targets, dim=0).cpu().numpy()
-    # seed_oof = torch.cat(seed_oof, dim=0).cpu().numpy()
-    # seed_preds = np.mean(seed_preds, axis=2)
-
-    # print("Score for this seed {:5.5f}".format(mean_log_loss(seed_targets, seed_oof)))
-    # oof_targets = seed_targets
-    # oof[:, seed, :] = seed_oof
-    # preds += seed_preds / nstarts
-
-    # oof = np.mean(oof, axis=1)
-    # print("Overall score is {:5.5f}".format(mean_log_loss(oof_targets, oof)))
-
-    # ss[targets] = preds
-    # ss.loc[test_features["cp_type"] == "ctl_vehicle", targets] = 0
-    # ss.to_csv("submission_tmp.csv", index=False)
 
 
 if __name__ == "__main__":

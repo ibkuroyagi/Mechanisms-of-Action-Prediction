@@ -16,9 +16,7 @@ import torch
 import yaml
 from torch.utils.data import DataLoader
 
-sys.path.append(
-    "../input/modules/iterative-stratification/iterative-stratification-master"
-)
+sys.path.append("../input/iterative-stratification/iterative-stratification-master")
 sys.path.append("../input/modules/datasets")
 sys.path.append("../input/modules/facebookresearch")
 sys.path.append("../input/modules/Qwicen")
