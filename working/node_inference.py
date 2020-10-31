@@ -62,6 +62,7 @@ def main():
         "--config", type=str, required=True, help="Path of config file."
     )
     parser.add_argument("--verbose", type=int, default=1, help="verbose")
+    parser.add_argument("--is_save", action="store_true")
     args = parser.parse_args()
     # load and save config
     with open(args.config) as f:
@@ -187,19 +188,20 @@ def main():
     # calculate oof score
     cv_score = mean_log_loss(train_targets, oof_targets)
     logging.info(f"CV score: {cv_score:.6f}")
-    train_targets_df = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
-    train_targets_df.loc[train_idx, targets] = oof_targets
-    oof_path = os.path.join(args.outdir, "oof.csv")
-    train_targets_df.to_csv(oof_path, index=False)
-    logging.info(f"saved at {oof_path}")
-    # calculate eval data's submission file
-    preds_mean = preds.mean(axis=0)
-    ss = pd.read_csv("../input/lish-moa/sample_submission.csv")
-    ss[targets] = preds_mean
-    ss.loc[test_features["cp_type"] == "ctl_vehicle", targets] = 0
-    sub_path = os.path.join(args.outdir, "submission.csv")
-    ss.to_csv(sub_path, index=False)
-    logging.info(f"saved at {sub_path}")
+    if args.is_save:
+        train_targets_df = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
+        train_targets_df.loc[train_idx, targets] = oof_targets
+        oof_path = os.path.join(args.outdir, "oof.csv")
+        train_targets_df.to_csv(oof_path, index=False)
+        logging.info(f"saved at {oof_path}")
+        # calculate eval data's submission file
+        preds_mean = preds.mean(axis=0)
+        ss = pd.read_csv("../input/lish-moa/sample_submission.csv")
+        ss[targets] = preds_mean
+        ss.loc[test_features["cp_type"] == "ctl_vehicle", targets] = 0
+        sub_path = os.path.join(args.outdir, "submission.csv")
+        ss.to_csv(sub_path, index=False)
+        logging.info(f"saved at {sub_path}")
 
 
 if __name__ == "__main__":

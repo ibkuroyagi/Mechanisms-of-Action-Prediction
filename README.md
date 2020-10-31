@@ -94,7 +94,7 @@ kaggle competitions download -c lish-moa
 unzip lish-moa
 kaggle datasets download -d yasufuminakama/iterative-stratification
 unzip iterative-stratification.zip
-rm lish-moa.zip iterative-stratification.zipsssssss
+rm lish-moa.zip iterative-stratification.zip
 ```
 メモ
 - コンペの説明[https://www.kaggle.com/c/lish-moa/discussion/184005](https://www.kaggle.com/c/lish-moa/discussion/184005)
