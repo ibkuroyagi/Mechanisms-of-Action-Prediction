@@ -174,6 +174,7 @@ def main():
             config=config,
             device=device,
             add_name=f"{n}fold",
+            train=True,
         )
         # resume from checkpoint
         if len(args.resume) != 0:

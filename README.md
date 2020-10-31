@@ -84,7 +84,7 @@
 # リポジトリのクローン
 git clone https://github.com/ibkuroyagi/Mechanisms-of-Action-Prediction.git
 # 仮想環境の構築
-python3 -m venv venv
+virtualenv -p /usr/bin/python3.6 venv
 source venv/bin/activate
 pip install -r requirements.txt
 # 入力データのダウンロード
