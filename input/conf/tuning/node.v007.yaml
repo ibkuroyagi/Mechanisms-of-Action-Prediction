@@ -42,7 +42,7 @@ accum_grads: 1
 loss_type: SmoothBCEwLogits
 loss_params:
   reduction: sum
-  smoothing: 0.0005
+  smoothing: 0.001
 
 ###########################################################
 #              OPTIMIZER & SCHEDULER SETTING              #

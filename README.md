@@ -34,10 +34,14 @@
 - Out of Fold(oof)なファイルを必ず作成
 - みんながsubmitしやすいようなnotebookを作成
 
+## 実験結果
+結果はこのシートに記載していく
+[https://docs.google.com/spreadsheets/d/1eXo1StHFrhRA3AXmJbf_wdKSmB9vPXuRcrv32GBCi-8/edit#gid=0](https://docs.google.com/spreadsheets/d/1eXo1StHFrhRA3AXmJbf_wdKSmB9vPXuRcrv32GBCi-8/edit#gid=0)
+
 ## ToDo
 - [https://www.kaggle.com/c/lish-moa/discussion/184005](https://www.kaggle.com/c/lish-moa/discussion/184005)
 * データの前処理
-- [ ] label smooth
+- [x] ~~ label smooth ~~
 - [x] ~~ トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup ~~
 - [ ] pretictのlowerとupperをclip
 - [x] ~~ コントロールの出力を全て確認。もしかしたらすべて0かも ~~
@@ -186,4 +190,15 @@ rm lish-moa.zip iterative-stratification.zip
         * LabelSmoothLoss実装
     - 次回やること
         * LabelSmoothLossノートブックから提出
+- 10/30(金)
+    - 今日やったこと
+        * LabelSmoothLossノートブックから提出
+    - 次回やること
+        * 前処理のパイプライン作成
+- 10/31(土)
+    - 今日やったこと
+        * 前処理のパイプライン作成
+        * LabelSmoothLossパラメータサーチ
+    - 次回やること
+        * 前処理のパイプラインを用いて適当な前処理探索
 </div></details>

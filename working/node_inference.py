@@ -9,7 +9,6 @@ import sys
 import os
 import warnings
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
@@ -25,24 +24,16 @@ sys.path.append("../input/modules/utils")
 from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 from Tab_dataset import MoaDataset
 from node import NODE
+from preprocess import preprocess_pipeline
 from qhoptim import QHAdam
 from tab_trainer import mean_log_loss
 from tab_trainer import TabTrainer
 from utils import seed_everything
-from variables import top_feats
 
+# from variables import top_feats
 warnings.filterwarnings("ignore")
 
 
-def preprocess(df):
-    df = df.copy()
-    df.loc[:, "cp_type"] = df.loc[:, "cp_type"].map({"trt_cp": 0, "ctl_vehicle": 1})
-    df.loc[:, "cp_dose"] = df.loc[:, "cp_dose"].map({"D1": 0, "D2": 1})
-    del df["sig_id"]
-    return df
-
-
-# %%
 def main():
     """Run training process."""
     parser = argparse.ArgumentParser(
@@ -62,7 +53,7 @@ def main():
         "--config", type=str, required=True, help="Path of config file."
     )
     parser.add_argument("--verbose", type=int, default=1, help="verbose")
-    parser.add_argument("--is_save", action="store_true")
+    parser.add_argument("--is_save", type=int, default=-1, help="is save")
     args = parser.parse_args()
     # load and save config
     with open(args.config) as f:
@@ -98,13 +89,13 @@ def main():
     train_targets = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
     test_features = pd.read_csv("../input/lish-moa/test_features.csv")
     logging.info("Successfully load input files.")
-    train = preprocess(train_features)
-    test = preprocess(test_features)
+    train, test = preprocess_pipeline(train_features, test_features, config)
+    top_feats = np.arange(train.shape[1])
+    drop_idx = train["cp_type"] == 0
+    train = train.loc[drop_idx].reset_index(drop=True)
     del train_targets["sig_id"]
-    train_idx = train["cp_type"] == 0
-    train_targets = train_targets.loc[train_idx].reset_index(drop=True)
+    train_targets = train_targets.loc[drop_idx].reset_index(drop=True)
     targets = [col for col in train_targets.columns]
-    train = train.loc[train_idx].reset_index(drop=True)
     train = train.values
     test = test.values
     train_targets = train_targets.values
@@ -188,9 +179,9 @@ def main():
     # calculate oof score
     cv_score = mean_log_loss(train_targets, oof_targets)
     logging.info(f"CV score: {cv_score:.6f}")
-    if args.is_save:
+    if args.is_save > 0:
         train_targets_df = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
-        train_targets_df.loc[train_idx, targets] = oof_targets
+        train_targets_df.loc[drop_idx, targets] = oof_targets
         oof_path = os.path.join(args.outdir, "oof.csv")
         train_targets_df.to_csv(oof_path, index=False)
         logging.info(f"saved at {oof_path}")
