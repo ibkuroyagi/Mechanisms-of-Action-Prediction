@@ -31,6 +31,20 @@ step="best"
 . utils/parse_options.sh || exit 1;
 
 set -euo pipefail
+
+if [ "${stage}" -le 0 ] && [ "${stop_stage}" -ge 0 ]; then
+    log "Stage 1: Calculate dpgmm."
+    outdir=${expdir}/${tag}
+    log "Calculate dpgmm. See the progress via ${outdir}/calculate_dpgmm.log"
+    # shellcheck disable=SC2086
+    ${train_cmd} --num_threads "${n_jobs}" "${outdir}/calculate_dpgmm.log" \
+        python3.6 calculate_dpgmm.py \
+            --outdir "${outdir}" \
+            --config "${conf}" \
+            --verbose "${verbose}"
+    log "Successfully calculate dpgmm."
+fi
+
 if [ "${stage}" -le 1 ] && [ "${stop_stage}" -ge 1 ]; then
     log "Stage 1: Network training."
     outdir=${expdir}/${tag}

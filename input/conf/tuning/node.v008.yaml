@@ -1,5 +1,5 @@
 # to check QHAdam's stability
-# add preprocess
+# add preprocess cluster
 ###########################################################
 #                      GLOBAL SETTING                     #
 ###########################################################
@@ -7,9 +7,29 @@ seed: 1
 ###########################################################
 #                    PREPROCESS SETTING                   #
 ###########################################################
-norm_type: zscore
+norm_type: zscore  # select zscore or RankGauss
+# QuantileTransformer:
+#   n_quantiles: 100
+#   random_state: 1
+#   output_distribution: normal
 pca_threshold: 0.9
 VarianceThreshold: 0
+BayesianGaussianMixture_g:
+  n_components: 40
+  covariance_type: full
+  max_iter: 2000
+  random_state: 1
+  n_init: 100
+  weight_concentration_prior_type: dirichlet_process
+  verbose: 1
+BayesianGaussianMixture_c:
+  n_components: 20
+  covariance_type: full
+  max_iter: 2000
+  random_state: 1
+  n_init: 100
+  weight_concentration_prior_type: dirichlet_process
+  verbose: 1
 ###########################################################
 #                     NETWORK SETTING                     #
 ###########################################################
@@ -50,7 +70,7 @@ optimizer_params:
 scheduler_type: ReduceLROnPlateau
 scheduler_params:
   mode: min
-  factor: 0.5
+  factor: 0.2
   patience: 10
   verbose: False
   

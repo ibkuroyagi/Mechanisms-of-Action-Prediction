@@ -201,4 +201,10 @@ rm lish-moa.zip iterative-stratification.zip
         * LabelSmoothLossパラメータサーチ
     - 次回やること
         * 前処理のパイプラインを用いて適当な前処理探索
+- 11/1(日)
+    - 今日やったこと
+        * 前処理のパイプラインバグ取り
+        * dpgmm実装
+    - 次回やること
+        * v007~v009提出
 </div></details>

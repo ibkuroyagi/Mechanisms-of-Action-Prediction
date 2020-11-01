@@ -23,6 +23,8 @@ coverage.xml*
 .python-version
 .worktree
 *.log
+*.pkl
+*.job
 # input dataset
 input/lish-moa/
 input/iterative-stratification-master/

@@ -89,7 +89,10 @@ def main():
     # train_nontargets = pd.read_csv("../input/lish-moa/train_targets_nonscored.csv")
     test_features = pd.read_csv("../input/lish-moa/test_features.csv")
     logging.info("Successfully load input files.")
-    train, test = preprocess_pipeline(train_features, test_features, config)
+    dpgmm_dir = args.outdir
+    train, test = preprocess_pipeline(
+        train_features, test_features, config, path=dpgmm_dir
+    )
     logging.info(f"{train.shape}\n{train.head()}")
     logging.info(f"{test.shape}\n{test.head()}")
     top_feats = np.arange(train.shape[1])
