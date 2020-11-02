@@ -244,6 +244,6 @@ def preprocess_pipeline(train_features, test_features, config, path=None):
         print("Successfully caluculate dpgmm-c.")
     train = preprocess(train_features)
     test = preprocess(test_features)
-    print("Successfully decode categlical features.")
+    print("Successfully decode categorical features.")
     return train, test
     # return train.values, test.values

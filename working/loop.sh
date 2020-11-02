@@ -5,12 +5,13 @@
 . ./cmd.sh || exit 1;
 . ./path.sh || exit 1;
 
-stage=0
+stage=1
 verbose=1
 # shellcheck disable=SC1091
 . utils/parse_options.sh || exit 1;
 
-No=009
+# No=007
+for No in "007-2" "007-3" "007-4"; do
 conf="conf/tuning/node.v${No}.yaml"
 tag="node/v${No}"
 sbatch -J "M.${tag}" ./run.sh \
@@ -19,6 +20,7 @@ sbatch -J "M.${tag}" ./run.sh \
     --verbose "${verbose}" \
     --stop_stage 3 \
     --conf "${conf}"
+done
 # No=001
 # stage=2
 # conf="conf/tuning/node.v${No}.yaml"

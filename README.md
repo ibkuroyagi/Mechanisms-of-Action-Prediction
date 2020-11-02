@@ -35,7 +35,7 @@
 - みんながsubmitしやすいようなnotebookを作成
 
 ## 実験結果
-結果はこのシートに記載していく
+実験結果はこのシートに記載
 [https://docs.google.com/spreadsheets/d/1eXo1StHFrhRA3AXmJbf_wdKSmB9vPXuRcrv32GBCi-8/edit#gid=0](https://docs.google.com/spreadsheets/d/1eXo1StHFrhRA3AXmJbf_wdKSmB9vPXuRcrv32GBCi-8/edit#gid=0)
 
 ## ToDo
@@ -207,4 +207,10 @@ rm lish-moa.zip iterative-stratification.zip
         * dpgmm実装
     - 次回やること
         * v007~v009提出
+- 11/2(月)
+    - 今日やったこと
+        * v007提出
+        * v008,v009計算, v007拡張
+    - 次回やること
+        * v008,v009提出
 </div></details>
