@@ -43,6 +43,9 @@ def main():
         "--outdir", type=str, required=True, help="Path of output directory."
     )
     parser.add_argument(
+        "--dpgmmdir", type=str, default="", help="Path of dpgmm directory."
+    )
+    parser.add_argument(
         "--checkpoints",
         type=str,
         default="",
@@ -89,7 +92,9 @@ def main():
     train_targets = pd.read_csv("../input/lish-moa/train_targets_scored.csv")
     test_features = pd.read_csv("../input/lish-moa/test_features.csv")
     logging.info("Successfully load input files.")
-    train, test = preprocess_pipeline(train_features, test_features, config)
+    train, test = preprocess_pipeline(
+        train_features, test_features, config, path=args.dpgmmdir
+    )
     top_feats = np.arange(train.shape[1])
     drop_idx = train["cp_type"] == 0
     train = train.loc[drop_idx].reset_index(drop=True)

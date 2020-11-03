@@ -1,4 +1,4 @@
-# to check QHAdam's stability
+# BCEWithLogitsLoss
 # add preprocess
 ###########################################################
 #                      GLOBAL SETTING                     #
@@ -32,7 +32,7 @@ accum_grads: 1
 ###########################################################
 #                       LOSS SETTING                      #
 ###########################################################
-loss_type: BCEWithLogitLoss
+loss_type: BCEWithLogitsLoss
 loss_params:
   reduction: sum
   # smoothing: 0.001

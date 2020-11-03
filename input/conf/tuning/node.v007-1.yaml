@@ -7,16 +7,20 @@ seed: 1
 ###########################################################
 #                    PREPROCESS SETTING                   #
 ###########################################################
-norm_type: zscore
+norm_type: RankGauss
+QuantileTransformer:
+  n_quantiles: 100
+  random_state: 1
+  output_distribution: normal
 pca_threshold: 0.9
 VarianceThreshold: 0
 ###########################################################
 #                     NETWORK SETTING                     #
 ###########################################################
 model_params:
-  layer_dim: 64
+  layer_dim: 16
   num_layers: 4
-  tree_dim: 2
+  tree_dim: 1
   depth: 6
   input_dropout: 0.3
   flatten_output: True

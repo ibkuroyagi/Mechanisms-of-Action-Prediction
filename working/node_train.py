@@ -51,6 +51,9 @@ def main():
     parser.add_argument(
         "--config", type=str, required=True, help="Path of config file."
     )
+    parser.add_argument(
+        "--dpgmmdir", type=str, default="", help="Path of dpgmm directory."
+    )
     parser.add_argument("--verbose", type=int, default=1, help="verbose")
     args = parser.parse_args()
     # load and save config
@@ -89,9 +92,9 @@ def main():
     # train_nontargets = pd.read_csv("../input/lish-moa/train_targets_nonscored.csv")
     test_features = pd.read_csv("../input/lish-moa/test_features.csv")
     logging.info("Successfully load input files.")
-    dpgmm_dir = args.outdir
+    # dpgmm_dir = args.outdir
     train, test = preprocess_pipeline(
-        train_features, test_features, config, path=dpgmm_dir
+        train_features, test_features, config, path=args.dpgmmdir
     )
     logging.info(f"{train.shape}\n{train.head()}")
     logging.info(f"{test.shape}\n{test.head()}")

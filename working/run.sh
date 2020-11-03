@@ -23,7 +23,7 @@ verbose=1      # verbosity level, higher is more logging
 # directory related
 expdir=exp          # directory to save experiments
 tag="node/base"    # tag for manangement of the naming of experiments
-
+dpgmmdir="../input/models/dpgmm"
 # evaluation related
 checkpoint="best_loss"          # path of checkpoint to be used for evaluation
 step="best"
@@ -38,8 +38,8 @@ if [ "${stage}" -le 0 ] && [ "${stop_stage}" -ge 0 ]; then
     log "Calculate dpgmm. See the progress via ${outdir}/calculate_dpgmm.log"
     # shellcheck disable=SC2086
     ${train_cmd} --num_threads "${n_jobs}" "${outdir}/calculate_dpgmm.log" \
-        python3.6 calculate_dpgmm.py \
-            --outdir "${outdir}" \
+        python calculate_dpgmm.py \
+            --outdir "${dpgmmdir}" \
             --config "${conf}" \
             --verbose "${verbose}"
     log "Successfully calculate dpgmm."
@@ -51,9 +51,10 @@ if [ "${stage}" -le 1 ] && [ "${stop_stage}" -ge 1 ]; then
     log "Training start. See the progress via ${outdir}/train.log"
     # shellcheck disable=SC2086
     ${cuda_cmd} --num_threads "${n_jobs}" --gpu "${n_gpus}" "${outdir}/train.log" \
-        python3.6 node_train.py \
+        python node_train.py \
             --outdir "${outdir}" \
             --config "${conf}" \
+            --dpgmmdir "${dpgmmdir}" \
             --verbose "${verbose}"
     log "Successfully finished the training."
 fi
@@ -67,10 +68,11 @@ if [ "${stage}" -le 2 ] && [ "${stop_stage}" -ge 2 ]; then
     log "Inference start. See the progress via ${outdir}/inference.log"
     # shellcheck disable=SC2086
     ${cuda_cmd} --num_threads "${n_jobs}" --gpu "${n_gpus}" "${outdir}/inference.log" \
-        python3.6 node_inference.py \
+        python node_inference.py \
             --outdir "${outdir}" \
             --config "${conf}" \
             --checkpoints ${checkpoints} \
+            --dpgmmdir "${dpgmmdir}" \
             --verbose "${verbose}"
     log "Successfully finished the inference."
 fi
