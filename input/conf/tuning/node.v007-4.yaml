@@ -1,5 +1,5 @@
 # add L2, dropout0.4 BCEWithLogitsLoss
-# add preprocess
+# add BCEWithLogitsLoss
 ###########################################################
 #                      GLOBAL SETTING                     #
 ###########################################################
