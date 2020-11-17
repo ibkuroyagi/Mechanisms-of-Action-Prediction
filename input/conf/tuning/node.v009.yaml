@@ -1,5 +1,4 @@
-# to check QHAdam's stability
-# add preprocess cluster
+# add global preprocess cluster
 ###########################################################
 #                      GLOBAL SETTING                     #
 ###########################################################
@@ -7,16 +6,23 @@ seed: 1
 ###########################################################
 #                    PREPROCESS SETTING                   #
 ###########################################################
+is_concat: True
 norm_type: RankGauss  # select zscore or RankGauss
 QuantileTransformer:
   n_quantiles: 100
   random_state: 1
   output_distribution: normal
+# PCA
 pca_threshold: 0.9
+# variance threshold
 VarianceThreshold: 0
+# k-means++
+n_cluster_g: 20
+n_cluster_c: 10
+# dpgmm
 BayesianGaussianMixture_g:
   n_components: 40
-  covariance_type: full
+  covariance_type: diag
   max_iter: 2000
   random_state: 1
   n_init: 100
@@ -24,7 +30,7 @@ BayesianGaussianMixture_g:
   verbose: 1
 BayesianGaussianMixture_c:
   n_components: 20
-  covariance_type: full
+  covariance_type: diag
   max_iter: 2000
   random_state: 1
   n_init: 100
@@ -34,17 +40,17 @@ BayesianGaussianMixture_c:
 #                     NETWORK SETTING                     #
 ###########################################################
 model_params:
-  layer_dim: 16
+  layer_dim: 512
   num_layers: 4
   tree_dim: 1
   depth: 6
-  input_dropout: 0.3
+  input_dropout: 0.4
   flatten_output: True
 out_dim: 206
 ###########################################################
 #                    TRAINING SETTING                     #
 ###########################################################
-n_fold: 10
+n_fold: 7
 batch_size: 128
 num_workers: 2
 pin_memory: True
@@ -76,5 +82,5 @@ scheduler_params:
 ###########################################################
 #                    INTERVAL SETTING                     #
 ###########################################################
-train_max_steps: 40000 # Number of training steps.
+train_max_steps: 30000 # Number of training steps.
 save_interval_steps: 10000 # Interval steps to save checkpoint.

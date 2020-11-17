@@ -94,7 +94,11 @@ def main():
     logging.info("Successfully load input files.")
     # dpgmm_dir = args.outdir
     train, test = preprocess_pipeline(
-        train_features, test_features, config, path=args.dpgmmdir
+        train_features,
+        test_features,
+        config,
+        path=args.dpgmmdir,
+        is_concat=config.get("is_concat", False),
     )
     logging.info(f"{train.shape}\n{train.head()}")
     logging.info(f"{test.shape}\n{test.head()}")
@@ -102,9 +106,9 @@ def main():
     drop_idx = train["cp_type"] == 0
     train = train.loc[drop_idx].reset_index(drop=True)
     del train_targets["sig_id"]
-    # from IPython import embed
+    from IPython import embed
 
-    # embed()
+    embed()
     train_targets = train_targets.loc[drop_idx].reset_index(drop=True)
     train = train.values
     test = test.values

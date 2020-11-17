@@ -41,10 +41,11 @@
 ## ToDo
 - [https://www.kaggle.com/c/lish-moa/discussion/184005](https://www.kaggle.com/c/lish-moa/discussion/184005)
 * データの前処理
-- [x] ~~ label smooth ~~
-- [x] ~~ トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup ~~
+- [x] ~~label smooth~~
+- [x] ~~トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup~~
 - [ ] pretictのlowerとupperをclip
-- [x] ~~ コントロールの出力を全て確認。もしかしたらすべて0かも ~~
+- [x] ~~コントロールの出力を全て確認。もしかしたらすべて0かも~~
+- [x] ~~Neural Oblivious Decision Ensembles(NNで作った多段決定木をredualに結合して出力)~~
 - [ ] Pseudolabeling/noisy label training
 - [ ] バランシングの適応 (優先順位低め)
 - [ ] アップサンプリング[https://www.kaggle.com/c/lish-moa/discussion/187419](https://www.kaggle.com/c/lish-moa/discussion/187419)
@@ -56,8 +57,11 @@
     - [ ] ノンスコアのターゲットを予測し、その後のモデルのメタ特徴として使用
     - [ ] ノンスコアのターゲットも含めたモデルで学習する
 * 畔栁タスク
-    - [x] ~~ TabNetベースライン作成 ~~
-    - [ ] カテゴリ変数を埋め込み特徴量として学習
+    - [x] ~~TabNetベースライン作成~~
+    - [x] PCA
+    - [x] DPGMM
+    - [x] Z-score
+    - [x] RankGauss
     - [ ] noisy label training
     - [ ] AEでデノイズor中間層を特徴量に追加(Nakayamaさんこれ好きなイメージ)
     - [ ] メトリックラーニングをAEに適応して、他のモデルの特徴量にする (クラスタリングの重心を特徴量に加えるイメージ)
@@ -77,8 +81,7 @@
 
 ## On Going
 - TabNetベースライン作成
-## Done
-- Neural Oblivious Decision Ensembles(NNで作った多段決定木をredualに結合して出力)
+
 
 
 ## introduction
@@ -213,4 +216,16 @@ rm lish-moa.zip iterative-stratification.zip
         * v008,v009計算, v007拡張
     - 次回やること
         * v008,v009提出
+- 11/3(火)
+    - 今日やったこと
+        * v007-4,v008,v009提出
+        * 定期ミーティング -> on the  flyの重要性を確認 
+    - 次回やること
+        * v007-1~3提出
+- 11/4(水)
+    - 今日やったこと
+        * v007-1~3提出
+        * v008-*,v009-*計算
+    - 次回やること
+        * v008-*,v009-*提出
 </div></details>
