@@ -649,15 +649,36 @@ class TAB(nn.Module):
         self.dropout3 = nn.Dropout(0.4)
         self.dense3 = nn.utils.weight_norm(nn.Linear(layer_dim, out_dim))
 
+    def recalibrate_layer(self, layer):
+        if torch.isnan(layer.weight_v).sum() > 0:
+            print("recalibrate layer.weight_v")
+            layer.weight_v = torch.nn.Parameter(
+                torch.where(
+                    torch.isnan(layer.weight_v),
+                    torch.zeros_like(layer.weight_v),
+                    layer.weight_v,
+                )
+            )
+            layer.weight_v = torch.nn.Parameter(layer.weight_v + 1e-7)
+        if torch.isnan(layer.weight).sum() > 0:
+            print("recalibrate layer.weight")
+            layer.weight = torch.where(
+                torch.isnan(layer.weight), torch.zeros_like(layer.weight), layer.weight
+            )
+            layer.weight += 1e-7
+
     def forward(self, x):
         x = self.batch_norm1(x)
+        self.recalibrate_layer(self.dense1)
         x = F.relu(self.dense1(x))
 
         x = self.batch_norm2(x)
         x = self.dropout2(x)
+        self.recalibrate_layer(self.dense2)
         x = F.relu(self.dense2(x))
 
         x = self.batch_norm3(x)
         x = self.dropout3(x)
+        self.recalibrate_layer(self.dense3)
         x = self.dense3(x)
         return x

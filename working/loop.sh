@@ -10,7 +10,7 @@ verbose=1
 # shellcheck disable=SC1091
 . utils/parse_options.sh || exit 1;
 
-No="010"
+No="009"
 # for No in "007-1" "007-2" "007-3" "007-4"; do
 conf="conf/tuning/node.v${No}.yaml"
 tag="node/v${No}"

@@ -39,7 +39,7 @@ class TabTrainer(object):
         device=torch.device("cpu"),
         train=False,
         add_name="",
-        is_kerrnel=False,
+        is_kernel=False,
     ):
         """Initialize trainer.
 
@@ -65,7 +65,7 @@ class TabTrainer(object):
         self.config = config
         self.device = device
         self.add_name = add_name
-        self.is_kerrnel = is_kerrnel
+        self.is_kernel = is_kernel
         if train:
             self.writer = SummaryWriter(config["outdir"])
         self.finish_train = False
@@ -92,7 +92,7 @@ class TabTrainer(object):
                 break
 
         self.tqdm.close()
-        if self.is_kerrnel:
+        if self.is_kernel:
             print("Finished training.")
         else:
             logging.info("Finished training.")

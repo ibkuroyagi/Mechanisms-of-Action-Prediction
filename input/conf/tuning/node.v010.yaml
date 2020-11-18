@@ -25,7 +25,7 @@ BayesianGaussianMixture_g:
   covariance_type: diag
   max_iter: 2000
   random_state: 1
-  n_init: 10
+  n_init: 5
   weight_concentration_prior_type: dirichlet_process
   verbose: -1
 BayesianGaussianMixture_c:
@@ -33,7 +33,7 @@ BayesianGaussianMixture_c:
   covariance_type: diag
   max_iter: 2000
   random_state: 1
-  n_init: 10
+  n_init: 5
   weight_concentration_prior_type: dirichlet_process
   verbose: -1
 ###########################################################

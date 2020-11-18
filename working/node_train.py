@@ -101,7 +101,7 @@ def main():
     )
     logging.info(f"{train.shape}\n{train.head()}")
     logging.info(f"{test.shape}\n{test.head()}")
-    drop_cols = train.columns[train.std() == 0]
+    drop_cols = train.columns[train.std() < 0.2]
     train.drop(columns=drop_cols, inplace=True)
     test.drop(columns=drop_cols, inplace=True)
     top_feats = np.arange(train.shape[1])
