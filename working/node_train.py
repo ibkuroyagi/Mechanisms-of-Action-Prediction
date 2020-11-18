@@ -21,9 +21,9 @@ sys.path.append("../input/modules/losses")
 sys.path.append("../input/modules/Qwicen")
 sys.path.append("../input/modules/trainer")
 sys.path.append("../input/modules/utils")
+import node
 from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 from label_smooth_loss import SmoothBCEwLogits
-from node import NODE
 from preprocess import preprocess_pipeline
 from qhoptim import QHAdam
 from Tab_dataset import MoaDataset
@@ -36,7 +36,6 @@ from utils import seed_everything
 warnings.filterwarnings("ignore")
 
 
-# %%
 def main():
     """Run training process."""
     parser = argparse.ArgumentParser(
@@ -133,6 +132,11 @@ def main():
             config.get("loss_type", "BCELoss"),
         )
     criterion = loss_class(**config["loss_params"]).to(device)
+    model_class = getattr(
+        node,
+        # keep compatibility
+        config.get("model_type", "NODE"),
+    )
 
     # for GPU/CPU
     kfold = MultilabelStratifiedKFold(
@@ -165,7 +169,7 @@ def main():
                 shuffle=False,
             ),
         }
-        model = NODE(
+        model = model_class(
             input_dim=len(top_feats),
             out_dim=config["out_dim"],
             **config["model_params"],
@@ -205,6 +209,7 @@ def main():
         # resume from checkpoint
         if len(resumes[n]) != 0:
             trainer.load_checkpoint(resumes[n])
+            trainer.steps = 0
             logging.info(f"Successfully resumed from {resumes[n]}.")
 
         # run training loop
