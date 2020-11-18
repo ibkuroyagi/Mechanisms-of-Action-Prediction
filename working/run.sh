@@ -23,7 +23,7 @@ verbose=1      # verbosity level, higher is more logging
 # directory related
 expdir=exp          # directory to save experiments
 tag="node/base"    # tag for manangement of the naming of experiments
-dpgmmdir="../input/models/dpgmm"
+dpgmmdir="../input/dpgmm"
 # evaluation related
 checkpoint="best_loss"          # path of checkpoint to be used for evaluation
 step="best"

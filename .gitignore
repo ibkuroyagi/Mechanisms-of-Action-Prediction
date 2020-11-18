@@ -29,6 +29,7 @@ coverage.xml*
 input/lish-moa/
 input/iterative-stratification-master/
 input/models/
+input/dpgmm/
 # venv
 venv/
 # results
