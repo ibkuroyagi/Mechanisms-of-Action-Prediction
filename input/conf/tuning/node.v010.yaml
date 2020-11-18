@@ -39,14 +39,9 @@ BayesianGaussianMixture_c:
 ###########################################################
 #                     NETWORK SETTING                     #
 ###########################################################
-model_type: NODE
+model_type: TAB
 model_params:
-  layer_dim: 256
-  num_layers: 4
-  tree_dim: 1
-  depth: 4
-  input_dropout: 0.4
-  flatten_output: True
+  layer_dim: 512
 out_dim: 206
 ###########################################################
 #                    TRAINING SETTING                     #

@@ -633,3 +633,31 @@ class NODE(nn.Module):
         x = self.dropout0(x)
         x = self.out_layer(x)
         return x
+
+
+class TAB(nn.Module):
+    def __init__(self, input_dim, out_dim, layer_dim):
+        super(TAB, self).__init__()
+        self.batch_norm1 = nn.BatchNorm1d(input_dim)
+        self.dense1 = nn.utils.weight_norm(nn.Linear(input_dim, layer_dim))
+
+        self.batch_norm2 = nn.BatchNorm1d(layer_dim)
+        self.dropout2 = nn.Dropout(0.4)
+        self.dense2 = nn.utils.weight_norm(nn.Linear(layer_dim, layer_dim))
+
+        self.batch_norm3 = nn.BatchNorm1d(layer_dim)
+        self.dropout3 = nn.Dropout(0.4)
+        self.dense3 = nn.utils.weight_norm(nn.Linear(layer_dim, out_dim))
+
+    def forward(self, x):
+        x = self.batch_norm1(x)
+        x = F.relu(self.dense1(x))
+
+        x = self.batch_norm2(x)
+        x = self.dropout2(x)
+        x = F.relu(self.dense2(x))
+
+        x = self.batch_norm3(x)
+        x = self.dropout3(x)
+        x = self.dense3(x)
+        return x

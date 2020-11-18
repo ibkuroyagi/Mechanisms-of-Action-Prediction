@@ -228,4 +228,20 @@ rm lish-moa.zip iterative-stratification.zip
         * v008-*,v009-*計算
     - 次回やること
         * v008-*,v009-*提出
+- 11/16(月)
+    - 今日やったこと
+        * globalな前処理実装提出
+    - 次回やること
+        * globalな前処理パイプライン実装
+- 11/17(火)
+    - 今日やったこと
+        * globalな前処理パイプライン実装
+    - 次回やること
+        * globalな前処理パイプライン実装提出
+- 11/18(水)
+    - 今日やったこと
+        * globalな前処理パイプライン提出v009,v010
+        * 定例ミーティング
+    - 次回やること
+        * noisy label training実装
 </div></details>
