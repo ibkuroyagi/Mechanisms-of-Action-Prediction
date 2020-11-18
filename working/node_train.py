@@ -102,18 +102,28 @@ def main():
     )
     logging.info(f"{train.shape}\n{train.head()}")
     logging.info(f"{test.shape}\n{test.head()}")
+    drop_cols = train.columns[train.std() == 0]
+    train.drop(columns=drop_cols, inplace=True)
+    test.drop(columns=drop_cols, inplace=True)
     top_feats = np.arange(train.shape[1])
     drop_idx = train["cp_type"] == 0
     train = train.loc[drop_idx].reset_index(drop=True)
     del train_targets["sig_id"]
-    from IPython import embed
+    # from IPython import embed
 
-    embed()
+    # embed()
     train_targets = train_targets.loc[drop_idx].reset_index(drop=True)
     train = train.values
     test = test.values
     train_targets = train_targets.values
     logging.info("Successfully preprocessed.")
+    resumes = [""]
+    resumes += [
+        f"{config['outdir']}/best/best_loss{fold}fold.pkl"
+        for fold in range(config["n_fold"] - 1)
+    ]
+    logging.info(f"resumes: {resumes}")
+
     if config.get("loss_type", "BCELoss") == "SmoothBCEwLogits":
         loss_class = SmoothBCEwLogits
     else:
@@ -193,9 +203,9 @@ def main():
             train=True,
         )
         # resume from checkpoint
-        if len(args.resume) != 0:
-            trainer.load_checkpoint(args.resume)
-            logging.info(f"Successfully resumed from {args.resume}.")
+        if len(resumes[n]) != 0:
+            trainer.load_checkpoint(resumes[n])
+            logging.info(f"Successfully resumed from {resumes[n]}.")
 
         # run training loop
         try:

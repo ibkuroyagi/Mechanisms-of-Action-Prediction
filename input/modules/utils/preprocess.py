@@ -9,6 +9,8 @@ from sklearn.preprocessing import StandardScaler
 
 
 def apply_zscore(train_features, test_features, columns, is_concat=False):
+    if is_concat:
+        print("Caution: You use test data to make zscore feature.")
     for col in columns:
         transformer = StandardScaler()
         vec_len = len(train_features[col].values)
@@ -31,6 +33,8 @@ def apply_zscore(train_features, test_features, columns, is_concat=False):
 
 
 def apply_rank_gauss(train_features, test_features, columns, config, is_concat=False):
+    if is_concat:
+        print("Caution: You use test data to make rank gauss feature.")
     for col in columns:
         transformer = QuantileTransformer(**config)
         vec_len = len(train_features[col].values)
@@ -63,6 +67,7 @@ def apply_pca(
 ):
     pca = PCA(random_state=SEED)
     if is_concat:
+        print("Caution: You use test data to make PCA feature.")
         data = pd.concat([train_features[columns], test_features[columns]], axis=0)
         transformed = pca.fit_transform(data)
         train2 = transformed[: train_features.shape[0]]
@@ -98,14 +103,16 @@ def reduce_columns(train_features, test_features, threshold=0.8, is_concat=False
 def create_cluster(
     train, test, features, n_clusters=35, SEED=42, kind="g", is_concat=False
 ):
-    train_ = train[features].copy()
-    test_ = test[features].copy()
-    data = pd.concat([train_, test_], axis=0)
-    kmeans = KMeans(n_clusters=n_clusters, random_state=SEED).fit(data)
-    train[f"clusters_{kind}"] = kmeans.labels_[: train.shape[0]]
-    test[f"clusters_{kind}"] = kmeans.labels_[train.shape[0] :]
-    train = pd.get_dummies(train, columns=[f"clusters_{kind}"])
-    test = pd.get_dummies(test, columns=[f"clusters_{kind}"])
+    if is_concat:
+        print("Caution: You use test data to make k-means++ feature.")
+        train_ = train[features].copy()
+        test_ = test[features].copy()
+        data = pd.concat([train_, test_], axis=0)
+        kmeans = KMeans(n_clusters=n_clusters, random_state=SEED).fit(data)
+        train[f"clusters_{kind}"] = kmeans.labels_[: train.shape[0]]
+        test[f"clusters_{kind}"] = kmeans.labels_[train.shape[0] :]
+        train = pd.get_dummies(train, columns=[f"clusters_{kind}"])
+        test = pd.get_dummies(test, columns=[f"clusters_{kind}"])
     return train, test
 
 
@@ -121,6 +128,7 @@ def create_dpgmm_proba(
     from sklearn.mixture import BayesianGaussianMixture
 
     if is_concat:
+        print("Caution: You use test data to make dpgmm feature.")
         data = pd.concat([train_features[columns], test_features[columns]], axis=0)
         if path is None:
             dpgmm = BayesianGaussianMixture(**config)
@@ -129,8 +137,8 @@ def create_dpgmm_proba(
             with open(path, "rb") as f:
                 dpgmm = joblib.load(f)
         proba = dpgmm.predict_proba(data)
-        train2 = dpgmm.predict_proba(proba[: train_features.shape[0]])
-        test2 = dpgmm.predict_proba(proba[-test_features.shape[0] :])
+        train2 = proba[: train_features.shape[0]]
+        test2 = proba[-test_features.shape[0] :]
     else:
         if path is None:
             dpgmm = BayesianGaussianMixture(**config)
@@ -294,4 +302,3 @@ def preprocess_pipeline(
     test = preprocess(test_features)
     print("Successfully decode categorical features.")
     return train, test
-    # return train.values, test.values

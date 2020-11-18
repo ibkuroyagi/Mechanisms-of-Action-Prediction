@@ -19,7 +19,8 @@ sbatch -J "M.${tag}" ./run.sh \
     --tag "${tag}" \
     --verbose "${verbose}" \
     --stop_stage 3 \
-    --conf "${conf}"
+    --conf "${conf}" \
+    --dpgmmdir ""
 # done
 # for No in 008 009; do
 No=009

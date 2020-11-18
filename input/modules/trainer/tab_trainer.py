@@ -39,6 +39,7 @@ class TabTrainer(object):
         device=torch.device("cpu"),
         train=False,
         add_name="",
+        is_kerrnel=False,
     ):
         """Initialize trainer.
 
@@ -64,6 +65,7 @@ class TabTrainer(object):
         self.config = config
         self.device = device
         self.add_name = add_name
+        self.is_kerrnel = is_kerrnel
         if train:
             self.writer = SummaryWriter(config["outdir"])
         self.finish_train = False
@@ -90,7 +92,10 @@ class TabTrainer(object):
                 break
 
         self.tqdm.close()
-        logging.info("Finished training.")
+        if self.is_kerrnel:
+            print("Finished training.")
+        else:
+            logging.info("Finished training.")
 
     def save_checkpoint(self, checkpoint_path):
         """Save checkpoint.
@@ -187,14 +192,25 @@ class TabTrainer(object):
         )
         self._eval_epoch()
         # log
-        logging.info(
-            f"(Steps: {self.steps}) Finished {self.epochs} epoch training "
-            f"({train_steps_per_epoch} steps per epoch)."
-        )
-        for key in self.epoch_train_loss.keys():
-            logging.info(
-                f"(Epoch: {self.epochs}) {key} = {self.epoch_train_loss[key]:.5f}."
+        if self.is_kerrnel:
+            print(
+                f"(Steps: {self.steps}) Finished {self.epochs} epoch training "
+                f"({train_steps_per_epoch} steps per epoch)."
             )
+        else:
+            logging.info(
+                f"(Steps: {self.steps}) Finished {self.epochs} epoch training "
+                f"({train_steps_per_epoch} steps per epoch)."
+            )
+        for key in self.epoch_train_loss.keys():
+            if self.is_kerrnel:
+                print(
+                    f"(Epoch: {self.epochs}) {key} = {self.epoch_train_loss[key]:.5f}."
+                )
+            else:
+                logging.info(
+                    f"(Epoch: {self.epochs}) {key} = {self.epoch_train_loss[key]:.5f}."
+                )
         self._write_to_tensorboard(self.epoch_train_loss)
         # update
         self.train_steps_per_epoch = train_steps_per_epoch
@@ -232,7 +248,10 @@ class TabTrainer(object):
     def _eval_epoch(self):
         """Evaluate model one epoch."""
         self.epoch_eval_loss["dev/loss"] = 0
-        logging.info(f"(Steps: {self.steps}) Start dev data's evaluation.")
+        if self.is_kerrnel:
+            print(f"(Steps: {self.steps}) Start dev data's evaluation.")
+        else:
+            logging.info(f"(Steps: {self.steps}) Start dev data's evaluation.")
         # change mode
         self.model.eval()
 
@@ -269,16 +288,30 @@ class TabTrainer(object):
             )
             self.best_loss = self.epoch_eval_loss["dev/epoch_metric"]
         # log
-        logging.info(
-            f"(Steps: {self.steps}) Finished dev data's evaluation "
-            f"({eval_steps_per_epoch} steps per epoch)."
-        )
-        for key in self.epoch_eval_loss.keys():
-            logging.info(
-                f"(Epoch: {self.epochs}) {key} = {self.epoch_eval_loss[key]:.5f}."
+        if self.is_kerrnel:
+            print(
+                f"(Steps: {self.steps}) Finished dev data's evaluation "
+                f"({eval_steps_per_epoch} steps per epoch)."
             )
+        else:
+            logging.info(
+                f"(Steps: {self.steps}) Finished dev data's evaluation "
+                f"({eval_steps_per_epoch} steps per epoch)."
+            )
+        for key in self.epoch_eval_loss.keys():
+            if self.is_kerrnel:
+                print(
+                    f"(Epoch: {self.epochs}) {key} = {self.epoch_eval_loss[key]:.5f}."
+                )
+            else:
+                logging.info(
+                    f"(Epoch: {self.epochs}) {key} = {self.epoch_eval_loss[key]:.5f}."
+                )
         # average loss
-        logging.info(f"(Steps: {self.steps}) Start eval data's evaluation.")
+        if self.is_kerrnel:
+            print(f"(Steps: {self.steps}) Start eval data's evaluation.")
+        else:
+            logging.info(f"(Steps: {self.steps}) Start eval data's evaluation.")
         # update scheduler step
         if self.scheduler is not None:
             self.scheduler.step(self.epoch_eval_loss["dev/epoch_metric"])
