@@ -121,15 +121,16 @@ def create_dpgmm_proba(
     from sklearn.mixture import BayesianGaussianMixture
 
     if is_concat:
+        data = pd.concat([train_features[columns], test_features[columns]], axis=0)
         if path is None:
             dpgmm = BayesianGaussianMixture(**config)
-            data = pd.concat([train_features[columns], test_features[columns]], axis=0)
             dpgmm.fit(data)
         else:
             with open(path, "rb") as f:
                 dpgmm = joblib.load(f)
-        train2 = dpgmm.predict_proba(data[: train_features.shape[0]])
-        test2 = dpgmm.predict_proba(data[-test_features.shape[0] :])
+        proba = dpgmm.predict_proba(data)
+        train2 = dpgmm.predict_proba(proba[: train_features.shape[0]])
+        test2 = dpgmm.predict_proba(proba[-test_features.shape[0] :])
     else:
         if path is None:
             dpgmm = BayesianGaussianMixture(**config)
