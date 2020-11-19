@@ -17,8 +17,11 @@ from tensorboardX import SummaryWriter
 def mean_log_loss(y_true, y_pred, out_dim=206):
     metrics = []
     for i in range(out_dim):
+        int_idx = (y_true[:, i] == 1) | (y_true[:, i] == 0)
         metrics.append(
-            log_loss(y_true[:, i], y_pred[:, i].astype(float), labels=[0, 1])
+            log_loss(
+                y_true[int_idx, i].astype(int), y_pred[int_idx, i].astype(float), labels=[0, 1]
+            )
         )
     return np.mean(metrics)
 
@@ -40,6 +43,7 @@ class TabTrainer(object):
         train=False,
         add_name="",
         is_kernel=False,
+        n_pseudo_label=None,
     ):
         """Initialize trainer.
 

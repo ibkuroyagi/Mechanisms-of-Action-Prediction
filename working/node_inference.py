@@ -91,8 +91,15 @@ def main():
     test_features = pd.read_csv("../input/lish-moa/test_features.csv")
     logging.info("Successfully load input files.")
     train, test = preprocess_pipeline(
-        train_features, test_features, config, path=args.dpgmmdir
+        train_features,
+        test_features,
+        config,
+        path="",
+        is_concat=config.get("is_concat", False),
     )
+    drop_cols = train.columns[train.std() < 0.2]
+    train.drop(columns=drop_cols, inplace=True)
+    test.drop(columns=drop_cols, inplace=True)
     top_feats = np.arange(train.shape[1])
     drop_idx = train["cp_type"] == 0
     train = train.loc[drop_idx].reset_index(drop=True)

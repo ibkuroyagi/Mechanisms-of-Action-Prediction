@@ -1,0 +1,88 @@
+# add global preprocess cluster
+###########################################################
+#                      GLOBAL SETTING                     #
+###########################################################
+seed: 1
+###########################################################
+#                    PREPROCESS SETTING                   #
+###########################################################
+is_concat: True
+norm_type: RankGauss  # select zscore or RankGauss
+QuantileTransformer:
+  n_quantiles: 100
+  random_state: 1
+  output_distribution: normal
+# PCA
+pca_threshold: 0.9
+# variance threshold
+VarianceThreshold: 0
+# k-means++
+n_cluster_g: 20
+n_cluster_c: 10
+# dpgmm
+BayesianGaussianMixture_g:
+  n_components: 40
+  covariance_type: diag
+  max_iter: 2000
+  random_state: 1
+  n_init: 5
+  weight_concentration_prior_type: dirichlet_process
+  verbose: -1
+BayesianGaussianMixture_c:
+  n_components: 20
+  covariance_type: diag
+  max_iter: 2000
+  random_state: 1
+  n_init: 5
+  weight_concentration_prior_type: dirichlet_process
+  verbose: -1
+###########################################################
+#                     NETWORK SETTING                     #
+###########################################################
+model_type: NODE
+model_params:
+  layer_dim: 256
+  num_layers: 4
+  tree_dim: 4
+  depth: 6
+  input_dropout: 0.4
+  flatten_output: True
+out_dim: 206
+###########################################################
+#                    TRAINING SETTING                     #
+###########################################################
+n_fold: 7
+batch_size: 128
+num_workers: 2
+pin_memory: True
+accum_grads: 1
+###########################################################
+#                       LOSS SETTING                      #
+###########################################################
+loss_type: SmoothBCEwLogits
+loss_params:
+  reduction: sum
+  smoothing: 0.0008
+
+###########################################################
+#              OPTIMIZER & SCHEDULER SETTING              #
+###########################################################
+optimizer_type: QHAdam
+optimizer_params:
+  lr: 1.0e-3
+  nus: [0.7, 1.0]
+  betas: [0.995, 0.999]
+  weight_decay: 1.0e-5
+
+scheduler_type: ReduceLROnPlateau
+scheduler_params:
+  mode: min
+  factor: 0.2
+  patience: 10
+  verbose: False
+  
+###########################################################
+#                    INTERVAL SETTING                     #
+###########################################################
+train_max_steps: 3000 # Number of training steps.
+save_interval_steps: 1000 # Interval steps to save checkpoint.
