@@ -46,7 +46,7 @@
 - [ ] pretictのlowerとupperをclip
 - [x] ~~コントロールの出力を全て確認。もしかしたらすべて0かも~~
 - [x] ~~Neural Oblivious Decision Ensembles(NNで作った多段決定木をredualに結合して出力)~~
-- [ ] Pseudolabeling/noisy label training
+- [x] ~~Pseudolabeling/noisy label training~~
 - [ ] バランシングの適応 (優先順位低め)
 - [ ] アップサンプリング[https://www.kaggle.com/c/lish-moa/discussion/187419](https://www.kaggle.com/c/lish-moa/discussion/187419)
     * [ノートブック](https://www.kaggle.com/tolgadincer/upsampling-multilabel-data-with-mlsmote)
@@ -58,11 +58,12 @@
     - [ ] ノンスコアのターゲットも含めたモデルで学習する
 * 畔栁タスク
     - [x] ~~TabNetベースライン作成~~
-    - [x] PCA
-    - [x] DPGMM
-    - [x] Z-score
-    - [x] RankGauss
-    - [ ] noisy label training
+    - [x] ~~PCA~~
+    - [x] ~~DPGMM~~
+    - [x] ~~Z-score~~
+    - [x] ~~RankGauss~~
+    - [x] ~~noisy label training~~
+    - [x] ~~globalな特徴量作成(testデータの情報を追加)~~
     - [ ] AEでデノイズor中間層を特徴量に追加(Nakayamaさんこれ好きなイメージ)
     - [ ] メトリックラーニングをAEに適応して、他のモデルの特徴量にする (クラスタリングの重心を特徴量に加えるイメージ)
     * モデル構造
