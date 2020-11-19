@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # Copyright 2020 Ibuki Kuroyanagi
-# %%
 import argparse
 import logging
 import sys
@@ -21,11 +20,10 @@ sys.path.append("../input/modules/facebookresearch")
 sys.path.append("../input/modules/Qwicen")
 sys.path.append("../input/modules/trainer")
 sys.path.append("../input/modules/utils")
+import node
 from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 from Tab_dataset import MoaDataset
-from node import NODE
 from preprocess import preprocess_pipeline
-from qhoptim import QHAdam
 from tab_trainer import mean_log_loss
 from tab_trainer import TabTrainer
 from utils import seed_everything
@@ -121,6 +119,12 @@ def main():
             shuffle=False,
         ),
     }
+    model_class = getattr(
+        node,
+        # keep compatibility
+        config.get("model_type", "NODE"),
+    )
+
     oof_targets = np.zeros((len(train), ntargets))
     preds = np.zeros((config["n_fold"], len(test), ntargets))
     for n, (tr, te) in enumerate(kfold.split(train_targets, train_targets)):
@@ -137,7 +141,7 @@ def main():
                 shuffle=False,
             ),
         }
-        model = NODE(
+        model = model_class(
             input_dim=len(top_feats),
             out_dim=config["out_dim"],
             **config["model_params"],

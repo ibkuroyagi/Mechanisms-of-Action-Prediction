@@ -244,4 +244,9 @@ rm lish-moa.zip iterative-stratification.zip
         * 定例ミーティング
     - 次回やること
         * noisy label training実装
+- 11/19(木)
+    - 今日やったこと
+        * noisy label training実装&提出v009,v010
+    - 次回やること
+        * TabNet実装
 </div></details>

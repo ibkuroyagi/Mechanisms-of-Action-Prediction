@@ -192,7 +192,7 @@ class TabTrainer(object):
         )
         self._eval_epoch()
         # log
-        if self.is_kerrnel:
+        if self.is_kernel:
             print(
                 f"(Steps: {self.steps}) Finished {self.epochs} epoch training "
                 f"({train_steps_per_epoch} steps per epoch)."
@@ -203,7 +203,7 @@ class TabTrainer(object):
                 f"({train_steps_per_epoch} steps per epoch)."
             )
         for key in self.epoch_train_loss.keys():
-            if self.is_kerrnel:
+            if self.is_kernel:
                 print(
                     f"(Epoch: {self.epochs}) {key} = {self.epoch_train_loss[key]:.5f}."
                 )
@@ -248,7 +248,7 @@ class TabTrainer(object):
     def _eval_epoch(self):
         """Evaluate model one epoch."""
         self.epoch_eval_loss["dev/loss"] = 0
-        if self.is_kerrnel:
+        if self.is_kernel:
             print(f"(Steps: {self.steps}) Start dev data's evaluation.")
         else:
             logging.info(f"(Steps: {self.steps}) Start dev data's evaluation.")
@@ -288,7 +288,7 @@ class TabTrainer(object):
             )
             self.best_loss = self.epoch_eval_loss["dev/epoch_metric"]
         # log
-        if self.is_kerrnel:
+        if self.is_kernel:
             print(
                 f"(Steps: {self.steps}) Finished dev data's evaluation "
                 f"({eval_steps_per_epoch} steps per epoch)."
@@ -299,7 +299,7 @@ class TabTrainer(object):
                 f"({eval_steps_per_epoch} steps per epoch)."
             )
         for key in self.epoch_eval_loss.keys():
-            if self.is_kerrnel:
+            if self.is_kernel:
                 print(
                     f"(Epoch: {self.epochs}) {key} = {self.epoch_eval_loss[key]:.5f}."
                 )
@@ -308,7 +308,7 @@ class TabTrainer(object):
                     f"(Epoch: {self.epochs}) {key} = {self.epoch_eval_loss[key]:.5f}."
                 )
         # average loss
-        if self.is_kerrnel:
+        if self.is_kernel:
             print(f"(Steps: {self.steps}) Start eval data's evaluation.")
         else:
             logging.info(f"(Steps: {self.steps}) Start eval data's evaluation.")
