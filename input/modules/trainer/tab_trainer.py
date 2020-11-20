@@ -20,7 +20,9 @@ def mean_log_loss(y_true, y_pred, out_dim=206):
         int_idx = (y_true[:, i] == 1) | (y_true[:, i] == 0)
         metrics.append(
             log_loss(
-                y_true[int_idx, i].astype(int), y_pred[int_idx, i].astype(float), labels=[0, 1]
+                y_true[int_idx, i].astype(int),
+                y_pred[int_idx, i].astype(float),
+                labels=[0, 1],
             )
         )
     return np.mean(metrics)
@@ -181,18 +183,19 @@ class TabTrainer(object):
             y_true=self.train_y_epoch,
             y_pred=self.train_pred_epoch,
         )
+        int_idx = (self.train_y_epoch.flatten() == 1) | (
+            self.train_y_epoch.flatten() == 0
+        )
+        y_true = self.train_y_epoch.flatten()[int_idx]
+        y_score = self.train_pred_epoch.flatten()[int_idx]
         self.epoch_train_loss["train/epoch_auc"] = roc_auc_score(
-            y_true=self.train_y_epoch.flatten(), y_score=self.train_pred_epoch.flatten()
+            y_true=y_true, y_score=y_score
         )
-        preds = (self.train_pred_epoch > 0.5).flatten()
-        self.epoch_train_loss["train/epoch_acc"] = accuracy_score(
-            self.train_y_epoch.flatten(), preds
-        )
-        self.epoch_train_loss["train/epoch_recall"] = recall_score(
-            self.train_y_epoch.flatten(), preds
-        )
+        preds = y_score > 0.5
+        self.epoch_train_loss["train/epoch_acc"] = accuracy_score(y_true, preds)
+        self.epoch_train_loss["train/epoch_recall"] = recall_score(y_true, preds)
         self.epoch_train_loss["train/epoch_precision"] = precision_score(
-            self.train_y_epoch.flatten(), preds, zero_division=0
+            y_true, preds, zero_division=0
         )
         self._eval_epoch()
         # log
@@ -269,18 +272,17 @@ class TabTrainer(object):
             y_true=self.dev_y_epoch,
             y_pred=self.dev_pred_epoch,
         )
+        int_idx = (self.dev_y_epoch.flatten() == 1) | (self.dev_y_epoch.flatten() == 0)
+        y_true = self.dev_y_epoch.flatten()[int_idx]
+        y_score = self.dev_pred_epoch.flatten()[int_idx]
         self.epoch_eval_loss["dev/epoch_auc"] = roc_auc_score(
-            y_true=self.dev_y_epoch.flatten(), y_score=self.dev_pred_epoch.flatten()
+            y_true=y_true, y_score=y_score
         )
-        preds = (self.dev_pred_epoch > 0.5).flatten()
-        self.epoch_eval_loss["dev/epoch_acc"] = accuracy_score(
-            self.dev_y_epoch.flatten(), preds
-        )
-        self.epoch_eval_loss["dev/epoch_recall"] = recall_score(
-            self.dev_y_epoch.flatten(), preds
-        )
+        preds = y_score > 0.5
+        self.epoch_eval_loss["dev/epoch_acc"] = accuracy_score(y_true, preds)
+        self.epoch_eval_loss["dev/epoch_recall"] = recall_score(y_true, preds)
         self.epoch_eval_loss["dev/epoch_precision"] = precision_score(
-            self.dev_y_epoch.flatten(), preds, zero_division=0
+            y_true, preds, zero_division=0
         )
         if self.best_loss > self.epoch_eval_loss["dev/epoch_metric"]:
             self.save_checkpoint(
