@@ -682,3 +682,39 @@ class TAB(nn.Module):
         self.recalibrate_layer(self.dense3)
         x = self.dense3(x)
         return x
+
+
+class StackingCNN(nn.Module):
+    def __init__(self, out_dim=206, kernel_size=2):
+        super(StackingCNN, self).__init__()
+        self.conv1 = nn.utils.weight_norm(
+            nn.Conv1d(out_dim, out_dim, kernel_size=kernel_size)
+        )
+        self.batch_norm1 = nn.BatchNorm1d(out_dim)
+        self.dropout1 = nn.Dropout(0.1)
+        self.dense1 = nn.utils.weight_norm(nn.Linear(out_dim, out_dim))
+
+    def recalibrate_layer(self, layer):
+        if torch.isnan(layer.weight_v).sum() > 0:
+            print("recalibrate layer.weight_v")
+            layer.weight_v = torch.nn.Parameter(
+                torch.where(
+                    torch.isnan(layer.weight_v),
+                    torch.zeros_like(layer.weight_v),
+                    layer.weight_v,
+                )
+            )
+            layer.weight_v = torch.nn.Parameter(layer.weight_v + 1e-7)
+        if torch.isnan(layer.weight).sum() > 0:
+            print("recalibrate layer.weight")
+            layer.weight = torch.where(
+                torch.isnan(layer.weight), torch.zeros_like(layer.weight), layer.weight
+            )
+            layer.weight += 1e-7
+
+    def forward(self, x):
+        x = self.conv1(x).squeeze(-1)
+        x = self.dropout1(self.batch_norm1(x))
+        self.recalibrate_layer(self.dense1)
+        x = self.dense1(x)
+        return x

@@ -56,6 +56,7 @@
 * 成田タスク
     - [ ] ノンスコアのターゲットを予測し、その後のモデルのメタ特徴として使用
     - [ ] ノンスコアのターゲットも含めたモデルで学習する
+    - [ ] ブレンドの割合をminmaxを使って計算
 * 畔栁タスク
     - [x] ~~TabNetベースライン作成~~
     - [x] ~~PCA~~
@@ -66,6 +67,7 @@
     - [x] ~~globalな特徴量作成(testデータの情報を追加)~~
     - [ ] AEでデノイズor中間層を特徴量に追加(Nakayamaさんこれ好きなイメージ)
     - [ ] メトリックラーニングをAEに適応して、他のモデルの特徴量にする (クラスタリングの重心を特徴量に加えるイメージ)
+    - [x] ~~CNNベースのスタッキング~~
     * モデル構造
     - [ ] Tabunetの中間層でグループを作成すると,全結合のみよりもCVがgood
     - [ ] split NN keras[https://www.kaggle.com/gogo827jz/split-neural-network-approach-tf-keras](https://www.kaggle.com/gogo827jz/split-neural-network-approach-tf-keras)
@@ -250,4 +252,24 @@ rm lish-moa.zip iterative-stratification.zip
         * noisy label training実装&提出v009,v010
     - 次回やること
         * TabNet実装
+- 11/25(水)
+    - 今日やったこと
+        * NODEパラメータサーチ
+    - 次回やること
+        * fine-tune実装
+- 11/25(水)
+    - 今日やったこと
+        * fine-tune実装
+    - 次回やること
+        * pseudo-label実装
+- 11/26(木)
+    - 今日やったこと
+        * pseudo-label実装
+    - 次回やること
+        * CNNスタッキングコード実装
+- 11/27(金)
+    - 今日やったこと
+        * CNNスタッキングコード実装
+    - 次回やること
+        * CNNスタッキングコード成田くんモデル追加
 </div></details>
