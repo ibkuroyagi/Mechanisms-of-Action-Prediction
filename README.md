@@ -123,7 +123,7 @@ rm lish-moa.zip iterative-stratification.zip
 -  猫さん[https://www.kaggle.com/c/lish-moa/discussion/183377](https://www.kaggle.com/c/lish-moa/discussion/183377)
     * ブレンドのときのウェイト決定に使えるscipyのコード[https://www.kaggle.com/gogo827jz/optimise-blending-weights-with-bonus-0](https://www.kaggle.com/gogo827jz/optimise-blending-weights-with-bonus-0)
     * kernel Ridge
-    * Adversarial Validarionそんなにいらない
+    * Adversarial Validationそんなにいらない
     * PCAは効かない
     * マルチラベル分類はNNでしかやっていない、つまり、アルゴリズムベース(SVC, XGB and LGBM)では1target1modelでやっている.そのブレンドは上のコード  
 - 不均衡データに対するソリューション一覧 [https://www.kaggle.com/c/lish-moa/discussion/191545](https://www.kaggle.com/c/lish-moa/discussion/191545)

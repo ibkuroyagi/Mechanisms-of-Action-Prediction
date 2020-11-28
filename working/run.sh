@@ -12,7 +12,7 @@ log() {
 . ./cmd.sh || exit 1;
 
 # basic setting
-stage=2        # stage to start
+stage=0        # stage to start
 stop_stage=100 # stage to stop
 n_gpus=1       # number of gpus for training
 n_jobs=8       # number of parallel jobs in feature extraction
