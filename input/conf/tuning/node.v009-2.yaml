@@ -2,7 +2,7 @@
 ###########################################################
 #                      GLOBAL SETTING                     #
 ###########################################################
-seed: 1
+seed: 4
 ###########################################################
 #                    PREPROCESS SETTING                   #
 ###########################################################
@@ -78,10 +78,9 @@ scheduler_type: CosineAnnealingLR
 scheduler_params:
   T_max: 1000
   eta_min: 5.0e-6
-  verbose: False
   
 ###########################################################
 #                    INTERVAL SETTING                     #
 ###########################################################
-train_max_steps: 3000 # Number of training steps.
-save_interval_steps: 1000 # Interval steps to save checkpoint.
+train_max_steps: 4000 # Number of training steps.
+save_interval_steps: 2000 # Interval steps to save checkpoint.

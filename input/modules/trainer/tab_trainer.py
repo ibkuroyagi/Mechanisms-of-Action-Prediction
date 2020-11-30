@@ -45,7 +45,7 @@ class TabTrainer(object):
         train=False,
         add_name="",
         is_kernel=False,
-        n_pseudo_label=None,
+        verbose=1,
     ):
         """Initialize trainer.
 
@@ -72,6 +72,7 @@ class TabTrainer(object):
         self.device = device
         self.add_name = add_name
         self.is_kernel = is_kernel
+        self.verbose = verbose
         if train:
             self.writer = SummaryWriter(config["outdir"])
         self.finish_train = False
@@ -92,7 +93,8 @@ class TabTrainer(object):
         while True:
             # train one epoch
             self._train_epoch()
-
+            if self.epochs % self.verbose == 0:
+                self._eval_epoch()
             # check whether training is finished
             if self.finish_train:
                 break
@@ -197,7 +199,7 @@ class TabTrainer(object):
         self.epoch_train_loss["train/epoch_precision"] = precision_score(
             y_true, preds, zero_division=0
         )
-        self._eval_epoch()
+
         # log
         if self.is_kernel:
             print(
