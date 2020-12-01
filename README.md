@@ -82,11 +82,6 @@
     - [ ] label powerset (マルチラベルタスクをマルチクラスタスクに変換するらしい. これを使えばSVMやlgbも一つのモデルでOKなのでは?)[http://scikit.ml/api/skmultilearn.problem_transform.lp.html](http://scikit.ml/api/skmultilearn.problem_transform.lp.html)
     - [ ] トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup
 
-## On Going
-- TabNetベースライン作成
-
-
-
 ## introduction
 ホームディレクトリに.kaggleディレクトリが作成されている前提で作成します。
 ない場合は、こちら[https://www.currypurin.com/entry/2018/kaggle-api](https://www.currypurin.com/entry/2018/kaggle-api)を参照してください。
@@ -138,8 +133,8 @@ rm lish-moa.zip iterative-stratification.zip
     * 例えば、与えられた薬剤が "拮抗薬 "対 "他の何か "であるかどうかを最初に予測し、次に "拮抗薬 "のクラス内でどの遺伝子セットが影響を受けているかなどを予測することができます。
 
 ## 結果
-2166/4384 (962 shake down...)
-作成したモデル
+2166/4384 (962 shake down...)  
+## 作成したモデル
 - TabNet(CV: 0.016978)
     - PCA/statistic/rank-gauss/k-means
     - TabNetの学習済みモデルによる特徴量選択
