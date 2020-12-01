@@ -137,6 +137,25 @@ rm lish-moa.zip iterative-stratification.zip
 * MoAラベルに階層構造を追加する（これやりたい！）
     * 例えば、与えられた薬剤が "拮抗薬 "対 "他の何か "であるかどうかを最初に予測し、次に "拮抗薬 "のクラス内でどの遺伝子セットが影響を受けているかなどを予測することができます。
 
+## 結果
+2166/4384 (962 shake down...)
+作成したモデル
+- TabNet(CV: 0.016978)
+    - PCA/statistic/rank-gauss/k-means
+    - TabNetの学習済みモデルによる特徴量選択
+- NODE(CV: 0.016805)
+- MLP(CV: 0.012405)
+    - PCA/statistic/rank-gauss/k-means/dpgmm/Variance threshold
+    - pseudo-label(0.95以上のサンプルを追加)
+    - foldベースのファインチューニング
+- StackingCNN (conv1d kernel_size=3) (CV: 0.013989)
+- ブレンディング(CV: 0.011401)
+```
+CV: 0.011401
+Public: 0.01890
+Private: 0.01669
+```
+
 <details><summary>kaggle日記</summary><div>
 
 - 10/14(水)
@@ -282,9 +301,12 @@ rm lish-moa.zip iterative-stratification.zip
         * CNNスタッキングコード
     - 次回やること
         * ブレンディング追加
-- 11/29(日)
+- 11/30(月)
     - 今日やったこと
         * ブレンディング追加, verboseを引数処理にして高速化
     - 次回やること
+        * 祈る
+- 12/1(火)
+    - 今日やったこと
         * 祈る
 </div></details>
