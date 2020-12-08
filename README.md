@@ -54,9 +54,9 @@
 - [ ] ImbalancedDataSampler[pytorchの実装github](https://github.com/ufoym/imbalanced-dataset-sampler)
 * 特徴量作成
 * 成田タスク
-    - [ ] ノンスコアのターゲットを予測し、その後のモデルのメタ特徴として使用
-    - [ ] ノンスコアのターゲットも含めたモデルで学習する
-    - [ ] ブレンドの割合をminmaxを使って計算
+    - [x] ~~ノンスコアのターゲットを予測し、その後のモデルのメタ特徴として使用~~
+    - [x] ~~ノンスコアのターゲットも含めたモデルで学習する~~
+    - [x] ~~TABNetの重要度を使用する~~
 * 畔栁タスク
     - [x] ~~TabNetベースライン作成~~
     - [x] ~~PCA~~
@@ -73,14 +73,15 @@
     - [ ] split NN keras[https://www.kaggle.com/gogo827jz/split-neural-network-approach-tf-keras](https://www.kaggle.com/gogo827jz/split-neural-network-approach-tf-keras)
     - [ ] TabNet num_decision_steps = 1 makes OOF score much better [https://www.kaggle.com/gogo827jz/moa-stacked-tabnet-baseline-tensorflow-2-0](https://www.kaggle.com/gogo827jz/moa-stacked-tabnet-baseline-tensorflow-2-0)
 * 西山タスク
-    - [ ] SVM
-    - [ ] lgbm
-    - [ ] xgb
-    - [ ] kernel Ridge [https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets](https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets)
-    - [ ] label smooth 
-    - [ ] 計算量軽めモデルのハイパラチューニング[すごい重要らしい](https://www.kaggle.com/c/lish-moa/discussion/180918#1000976)
-    - [ ] label powerset (マルチラベルタスクをマルチクラスタスクに変換するらしい. これを使えばSVMやlgbも一つのモデルでOKなのでは?)[http://scikit.ml/api/skmultilearn.problem_transform.lp.html](http://scikit.ml/api/skmultilearn.problem_transform.lp.html)
+    - [x] ~~SVM~~
+    - [x] ~~lgbm~~
+    - [ ] ~~xgb~~
+    - [x] ~~kernel Ridge [https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets](https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets)~~
+    - [x] ~~label smooth ~~
+    - [x] ~~計算量軽めモデルのハイパラチューニング[すごい重要らしい](https://www.kaggle.com/c/lish-moa/discussion/180918#1000976)
+    - [ ] label powerset (マルチラベルタスクをマルチクラスタスクに変換するらしい. これを使えばSVMやlgbも一つのモデルでOKなのでは?)[http://scikit.ml/api/skmultilearn.problem_transform.lp.html](http://scikit.ml/api/skmultilearn.problem_transform.lp.html)~~
     - [ ] トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup
+    - [x] ~~ブレンドの割合をminmaxを使って計算~~
 
 ## introduction
 ホームディレクトリに.kaggleディレクトリが作成されている前提で作成します。
