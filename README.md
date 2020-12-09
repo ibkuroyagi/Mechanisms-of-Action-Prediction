@@ -74,8 +74,8 @@
     - [ ] TabNet num_decision_steps = 1 makes OOF score much better [https://www.kaggle.com/gogo827jz/moa-stacked-tabnet-baseline-tensorflow-2-0](https://www.kaggle.com/gogo827jz/moa-stacked-tabnet-baseline-tensorflow-2-0)
 * 西山タスク
     - [x] ~~SVM~~
-    - [x] ~~lgbm~~
-    - [ ] ~~xgb~~
+    - [x] ~~lgbm
+    - [ ] xgb
     - [x] ~~kernel Ridge [https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets](https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets)~~
     - [x] ~~label smooth ~~
     - [x] ~~計算量軽めモデルのハイパラチューニング[すごい重要らしい](https://www.kaggle.com/c/lish-moa/discussion/180918#1000976)
