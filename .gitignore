@@ -25,6 +25,7 @@ coverage.xml*
 *.log
 *.pkl
 *.job
+@eaDir/
 # input dataset
 input/lish-moa/
 input/iterative-stratification-master/

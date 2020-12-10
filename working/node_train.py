@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# %%
+
 # Copyright 2020 Ibuki Kuroyanagi
 import argparse
 import logging
