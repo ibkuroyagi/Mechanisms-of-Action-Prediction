@@ -1,6 +1,8 @@
 # Mechanisms of Action (MoA) Prediction
 ## Final submission deadline.
 - November 30, 2020
+## 反省資料
+[https://docs.google.com/presentation/d/1BssOEzBWpJ8X8wV5wpbHCWWZ9vAGEPzVn5l34Lu2xBk/edit?usp=sharing](https://docs.google.com/presentation/d/1BssOEzBWpJ8X8wV5wpbHCWWZ9vAGEPzVn5l34Lu2xBk/edit?usp=sharing0)
 
 ### 日本語訳
 本コンテストでは、遺伝子発現データや細胞生存率データなどの様々なインプットを与えられた異なるサンプル（sig_id）の作用機序（MoA）応答の複数のターゲットを予測
@@ -73,7 +75,7 @@ train_targets_scored.csv
     - [x] ~~RankGauss~~
     - [x] ~~noisy label training~~
     - [x] ~~globalな特徴量作成(testデータの情報を追加)~~
-    - [ ] AEでデノイズor中間層を特徴量に追加(Nakayamaさんこれ好きなイメージ)
+    - [ ] AEでデノイズor中間層を特徴量に追加
     - [ ] メトリックラーニングをAEに適応して、他のモデルの特徴量にする (クラスタリングの重心を特徴量に加えるイメージ)
     - [x] ~~CNNベースのスタッキング~~
     * モデル構造
@@ -85,8 +87,8 @@ train_targets_scored.csv
     - [x] ~~lgbm~~
     - [ ] xgb
     - [x] ~~kernel Ridge [https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets](https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets)~~
-    - [x] ~~label smooth ~~
-    - [x] ~~計算量軽めモデルのハイパラチューニング[すごい重要らしい](https://www.kaggle.com/c/lish-moa/discussion/180918#1000976)
+    - [x] ~~label smooth~~
+    - [x] ~~計算量軽めモデルのハイパラチューニング[すごい重要らしい](https://www.kaggle.com/c/lish-moa/discussion/180918#1000976)~~
     - [ ] label powerset (マルチラベルタスクをマルチクラスタスクに変換するらしい. これを使えばSVMやlgbも一つのモデルでOKなのでは?)[http://scikit.ml/api/skmultilearn.problem_transform.lp.html](http://scikit.ml/api/skmultilearn.problem_transform.lp.html)~~
     - [ ] トレーニングデータからコントロールグループを削除するとCV上がるらしい.LBは下がるけどブレンドするとLBもup
     - [x] ~~ブレンドの割合をminmaxを使って計算~~
@@ -159,6 +161,16 @@ CV: 0.011401
 Public: 0.01890
 Private: 0.01669
 ```
+## 敗因
+CVの切り方を間違えた。
+本来はtestとvalidの分布が一致するべきだが、validをtestによせすぎるとtrainにtestに近いデータがなくなり学習が進まなくなることを嫌ったせいでCVが信用ならない値を取るようになってしまった。
+また、fine-tuneの際に1fold前を初期値としたことで完全にvalidがリークを起こしてしまった。
+train/testに分布の差がないという前提をadversarial validationで確認したが、さすがに過学習をさせすぎてしまい、そこが致命的なミスとなった。  
+
+また、privateのデータを用いることに固執したことも良くなかった。
+それよりもseedを変えて汎か性能を高める努力をするべき(推論のみのコードにする)
+
+loglossに最適化してしまう問題に対処できなかった<- どういったターゲットがただ0に近い値を取るだけになるのかを気づけなかったので、それに応じた対応をとることが困難になった。
 
 <details><summary>kaggle日記</summary><div>
 
