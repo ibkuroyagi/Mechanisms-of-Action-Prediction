@@ -1,7 +1,7 @@
 # Mechanisms of Action (MoA) Prediction
 ## Final submission deadline.
 - November 30, 2020
-## 反省資料
+## 反省会資料
 [https://docs.google.com/presentation/d/1BssOEzBWpJ8X8wV5wpbHCWWZ9vAGEPzVn5l34Lu2xBk/edit?usp=sharing](https://docs.google.com/presentation/d/1BssOEzBWpJ8X8wV5wpbHCWWZ9vAGEPzVn5l34Lu2xBk/edit?usp=sharing0)
 
 ### 日本語訳
