@@ -7,12 +7,13 @@
 
 2つの注意点がある
 
-トレーニングデータには、テストデータには含まれず、スコアリングには使用されないMoAラベルの追加（オプション）セットがある
-再実行データセットは、パブリックテストで見られる例の約4倍の数を持つ
+1. トレーニングデータには、テストデータには含まれず、スコアリングには使用されないMoAラベルの追加（オプション）セットがある
+2. 再実行データセットは、パブリックテストで見られる例の約4倍の数を持つ
 ### ファイル
 - train_features.csv
     * g-接頭辞を持つ特徴量は遺伝子発現特徴量であり、その数は772個（g-0からg-771まで）ある
     * c-接頭辞を持つ特徴量は細胞生存率の特徴量であり、その数は100個（c-0からc-99まで）ある
+            * ただし、g,cともに匿名化されているため具体的にどんな遺伝子や細胞の反応かを知ることはできない
     * cp_typeは，サンプルが化合物で処理されたか，対照摂動（rt_cpまたはctl_vehicle）で処理されたかを示す2値のカテゴリ特徴量
     * cp_timeは，治療期間（24時間，48時間，72時間）を示す分類的特徴量
     * cp_doseは，投与量が低いか高いかを示す2値のカテゴリ特徴量である(D1またはD2)．
@@ -23,11 +24,18 @@
 - test_features.csv - テストデータの特徴量．テストデータの各行のスコアされたMoAの確率を予測する必要がある
 - sample_submission.csv - 正しい形式の提出ファイル
 
+train_features.csv
+![2020-12-22 (1)](https://user-images.githubusercontent.com/44137906/102840315-ec21c380-4445-11eb-970b-d3ac1bb83ea2.png)
+train_targets_scored.csv
+![2020-12-22](https://user-images.githubusercontent.com/44137906/102840317-ed52f080-4445-11eb-9f2b-2aa9eb07f66f.png)
+
+
 ## 評価指標
 各カラムにおけるバイナリクロスエントロピーを計算しその平均値を、すべてのサンプルで平均した値
+![2020-12-22 (2)](https://user-images.githubusercontent.com/44137906/102840475-520e4b00-4446-11eb-8d2a-dd478ed09beb.png)
 
 ## お願い
-* multistratifiledkfold的な使う
+* multistratifiledkfoldを使う
     * sys.path.append('../input/iterative-stratification/iterative-stratification-master')
     *  kfold = MultilabelStratifiedKFold(n_splits=nfolds, random_state=seed, shuffle=True)
     * [https://www.kaggle.com/gogo827jz/moa-public-pytorch-node](https://www.kaggle.com/gogo827jz/moa-public-pytorch-node)
@@ -74,7 +82,7 @@
     - [ ] TabNet num_decision_steps = 1 makes OOF score much better [https://www.kaggle.com/gogo827jz/moa-stacked-tabnet-baseline-tensorflow-2-0](https://www.kaggle.com/gogo827jz/moa-stacked-tabnet-baseline-tensorflow-2-0)
 * 西山タスク
     - [x] ~~SVM~~
-    - [x] ~~lgbm
+    - [x] ~~lgbm~~
     - [ ] xgb
     - [x] ~~kernel Ridge [https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets](https://www.kaggle.com/gogo827jz/kernel-logistic-regression-one-for-206-targets)~~
     - [x] ~~label smooth ~~
@@ -120,7 +128,7 @@ rm lish-moa.zip iterative-stratification.zip
     * ブレンドのときのウェイト決定に使えるscipyのコード[https://www.kaggle.com/gogo827jz/optimise-blending-weights-with-bonus-0](https://www.kaggle.com/gogo827jz/optimise-blending-weights-with-bonus-0)
     * kernel Ridge
     * Adversarial Validationそんなにいらない
-    * PCAは効かない
+    * PCAは非NNでそれほど効かない
     * マルチラベル分類はNNでしかやっていない、つまり、アルゴリズムベース(SVC, XGB and LGBM)では1target1modelでやっている.そのブレンドは上のコード  
 - 不均衡データに対するソリューション一覧 [https://www.kaggle.com/c/lish-moa/discussion/191545](https://www.kaggle.com/c/lish-moa/discussion/191545)
     * アップサンプリング[https://www.kaggle.com/c/lish-moa/discussion/187419](https://www.kaggle.com/c/lish-moa/discussion/187419)
