@@ -6,6 +6,7 @@
 - November 30, 2020
 ### 反省会資料
 [https://docs.google.com/presentation/d/1BssOEzBWpJ8X8wV5wpbHCWWZ9vAGEPzVn5l34Lu2xBk/edit?usp=sharing](https://docs.google.com/presentation/d/1BssOEzBWpJ8X8wV5wpbHCWWZ9vAGEPzVn5l34Lu2xBk/edit?usp=sharing0)
+fkubotaさんのスライドを拝借しました
 
 ### 日本語訳
 本コンテストでは、遺伝子発現データや細胞生存率データなどの様々なインプットを与えられた異なるサンプル（sig_id）の作用機序（MoA）応答の複数のターゲットを予測
